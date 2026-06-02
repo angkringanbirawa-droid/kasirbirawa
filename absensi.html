@@ -147,6 +147,17 @@ select{
   color:white;
   outline:none;
 }
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.5);
+  display:none;
+  z-index:998;
+}
+
+.overlay.active{
+  display:block;
+}
 
 </style>
 </head>
@@ -263,10 +274,25 @@ function toggleSidebar(){
 
   document
   .getElementById("sidebar")
-  .classList.toggle("active");
+  .classList.add("active");
+
+  document
+  .getElementById("overlay")
+  .classList.add("active");
 
 }
 
+function closeSidebar(){
+
+  document
+  .getElementById("sidebar")
+  .classList.remove("active");
+
+  document
+  .getElementById("overlay")
+  .classList.remove("active");
+
+}
 
 // =========================
 // ROLE
