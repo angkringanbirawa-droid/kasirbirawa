@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BirawaPOS Login</title>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#0b0b0b;
+  color:white;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+}
+
+/* ===================== */
+/* LIGHTNING BACKGROUND */
+/* ===================== */
+
+body::before,
+body::after{
+  content:"";
+  position:absolute;
+  width:200%;
+  height:200%;
+  top:-50%;
+  left:-50%;
+  background:
+    radial-gradient(circle, rgba(250,204,21,0.08) 0%, transparent 60%),
+    linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%);
+  animation:storm 6s infinite linear;
+  z-index:0;
+}
+
+@keyframes storm{
+  0%{transform:rotate(0deg);}
+  100%{transform:rotate(360deg);}
+}
+
+/* RANDOM LIGHTNING FLASH */
+.flash{
+  position:fixed;
+  inset:0;
+  background:white;
+  opacity:0;
+  z-index:2;
+  pointer-events:none;
+  animation:flash 4s infinite;
+}
+
+@keyframes flash{
+  0%, 92%, 100%{opacity:0;}
+  93%{opacity:0.15;}
+  94%{opacity:0;}
+  96%{opacity:0.25;}
+  97%{opacity:0;}
+}
+
+/* BOX */
+.box{
+  width:100%;
+  max-width:360px;
+  background:rgba(25,25,25,0.9);
+  padding:30px;
+  border-radius:20px;
+  border:1px solid rgba(250,204,21,0.2);
+  text-align:center;
+  z-index:3;
+  backdrop-filter:blur(10px);
+
+  animation:pop 1s ease;
+}
+
+@keyframes pop{
+  from{transform:scale(0.9); opacity:0;}
+  to{transform:scale(1); opacity:1;}
+}
+
+/* TITLE GLITCH */
+h2{
+  color:#facc15;
+  margin-bottom:20px;
+  position:relative;
+  animation:glitch 2s infinite;
+}
+
+@keyframes glitch{
+  0%{text-shadow:2px 0 red, -2px 0 blue;}
+  20%{text-shadow:-2px 0 red, 2px 0 blue;}
+  40%{text-shadow:2px 2px blue, -2px -2px red;}
+  60%{text-shadow:none;}
+  100%{text-shadow:2px 0 red, -2px 0 blue;}
+}
+
+/* INPUT */
+input{
+  width:100%;
+  padding:15px;
+  margin-bottom:12px;
+  border:none;
+  border-radius:10px;
+  background:#2b2b2b;
+  color:white;
+  outline:none;
+  transition:0.3s;
+}
+
+input:focus{
+  box-shadow:0 0 15px rgba(250,204,21,0.4);
+}
+
+/* BUTTON */
+button{
+  width:100%;
+  padding:15px;
+  margin-bottom:10px;
+  border:none;
+  border-radius:10px;
+  background:#facc15;
+  font-weight:bold;
+  cursor:pointer;
+
+  transition:0.3s;
+}
+
+button:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 25px rgba(250,204,21,0.4);
+}
+
+/* BACK BUTTON */
+.back{
+  background:#333;
+  color:white;
+}
+
+/* HIDDEN */
+.hidden{
+  display:none;
+}
+
+/* LOADING */
+.loading{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.9);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:10;
+}
+
+.spinner{
+  width:60px;
+  height:60px;
+  border:6px solid #333;
+  border-top:6px solid #facc15;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+  100%{transform:rotate(360deg);}
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="flash"></div>
+
+<div class="box">
+
+  <h2>Yuk Login</h2>
+
+  <div id="menu">
+    <button onclick="showOwner()">LOGIN OWNER</button>
+    <button onclick="showKaryawan()">LOGIN KARYAWAN</button>
+  </div>
+
+  <div id="owner" class="hidden">
+    <input type="password" id="pin" placeholder="PIN Owner">
+    <button onclick="loginOwner()">MASUK OWNER</button>
+    <button class="back" onclick="back()">KEMBALI</button>
+  </div>
+
+  <div id="karyawan" class="hidden">
+    <input type="text" id="user" placeholder="Username">
+    <input type="password" id="pass" placeholder="Password">
+    <button onclick="loginKaryawan()">MASUK KARYAWAN</button>
+    <button class="back" onclick="back()">KEMBALI</button>
+  </div>
+
+</div>
+
+<div class="loading" id="loading">
+  <div class="spinner"></div>
+</div>
+
+<script>
+
+const URL =
+"https://script.google.com/macros/s/AKfycbzdiABCZIRA7mWd6zx1vSFmnFEK6vm4polW3-hzHlilfeagTnN8V7yf9UO-BdCOKDUb/exec";
+
+function showLoading(){
+  document.getElementById("loading").style.display = "flex";
+}
+
+function hideLoading(){
+  document.getElementById("loading").style.display = "none";
+}
+
+function showOwner(){
+  document.getElementById("menu").classList.add("hidden");
+  document.getElementById("owner").classList.remove("hidden");
+}
+
+function showKaryawan(){
+  document.getElementById("menu").classList.add("hidden");
+  document.getElementById("karyawan").classList.remove("hidden");
+}
+
+function back(){
+  document.getElementById("menu").classList.remove("hidden");
+  document.getElementById("owner").classList.add("hidden");
+  document.getElementById("karyawan").classList.add("hidden");
+}
+
+async function loginOwner(){
+
+  const pin = document.getElementById("pin").value;
+  if(!pin) return alert("Isi PIN");
+
+  showLoading();
+
+  const res = await fetch(`${URL}?action=ownerLogin&pin=${pin}`);
+  const text = await res.text();
+
+  hideLoading();
+
+  if(text.trim()==="OWNER_SUCCESS"){
+    localStorage.setItem("loggedIn","true");
+    localStorage.setItem("role","owner");
+    window.location.href="data.html";
+  }else{
+    alert("PIN salah");
+  }
+}
+
+async function loginKaryawan(){
+
+  const user = document.getElementById("user").value;
+  const pass = document.getElementById("pass").value;
+
+  if(!user || !pass) return alert("Lengkapi data");
+
+  showLoading();
+
+  const res = await fetch(`${URL}?action=login&username=${user}&password=${pass}`);
+  const text = await res.text();
+
+  hideLoading();
+
+  if(text.trim()==="LOGIN BERHASIL"){
+    localStorage.setItem("loggedIn","true");
+    localStorage.setItem("role","karyawan");
+    localStorage.setItem("username",user);
+    window.location.href="data.html";
+  }else{
+    alert(text);
+  }
+}
+
+</script>
+
+</body>
+</html>

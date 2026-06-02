@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pengeluaran - BirawaPOS</title>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#111;
+  color:white;
+}
+
+.header{
+  background:#1b1b1b;
+  padding:18px;
+  display:flex;
+  align-items:center;
+  gap:15px;
+  border-bottom:1px solid #2a2a2a;
+}
+
+.menu-btn{
+  font-size:28px;
+  cursor:pointer;
+}
+
+.title{
+  font-size:20px;
+  font-weight:bold;
+  color:#facc15;
+}
+
+.sidebar{
+  width:260px;
+  height:100vh;
+  background:#1c1c1c;
+  position:fixed;
+  top:0;
+  left:-260px;
+  transition:.3s;
+  z-index:999;
+}
+
+.sidebar.active{
+  left:0;
+}
+
+.sidebar a{
+  display:block;
+  padding:18px;
+  color:white;
+  text-decoration:none;
+  border-bottom:1px solid #2a2a2a;
+}
+
+.sidebar a:hover{
+  background:#2a2a2a;
+}
+
+.overlay{
+  position:fixed;
+  width:100%;
+  height:100vh;
+  background:rgba(0,0,0,.5);
+  display:none;
+  top:0;
+  left:0;
+  z-index:998;
+}
+
+.overlay.active{
+  display:block;
+}
+
+.container{
+  padding:20px;
+}
+
+.card{
+  background:#1d1d1d;
+  border-radius:18px;
+  padding:18px;
+  margin-bottom:20px;
+  border:1px solid #2a2a2a;
+}
+
+.input{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  background:#2a2a2a;
+  color:white;
+  margin-bottom:12px;
+  outline:none;
+}
+
+.btn{
+  width:100%;
+  padding:15px;
+  border:none;
+  border-radius:14px;
+  background:#facc15;
+  color:#111;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.section-title{
+  font-size:18px;
+  font-weight:bold;
+  color:#facc15;
+  margin-bottom:15px;
+}
+
+.item{
+  background:#1d1d1d;
+  padding:15px;
+  border-radius:15px;
+  margin-bottom:12px;
+  border:1px solid #2a2a2a;
+}
+
+.item-keperluan{
+  font-size:16px;
+  font-weight:bold;
+}
+
+.item-nominal{
+  color:#ef4444;
+  font-weight:bold;
+  margin-top:6px;
+}
+
+.item-tanggal{
+  color:#888;
+  font-size:12px;
+  margin-top:5px;
+}
+
+.empty{
+  text-align:center;
+  color:#666;
+  margin-top:20px;
+}
+
+</style>
+</head>
+<body>
+
+<div class="header">
+
+  <div class="menu-btn" onclick="openSidebar()">
+    ☰
+  </div>
+
+  <div class="title">
+    Pengeluaran
+  </div>
+
+</div>
+
+<div class="sidebar" id="sidebar">
+
+  <a href="data.html">🏠 Dashboard</a>
+  <a href="transaksi.html">💰 Transaksi</a>
+  <a href="histori.html">🧾 Histori</a>
+  <a href="pengeluaran.html">📉 Pengeluaran</a>
+  <a href="input.html">🍜 Kelola Produk</a>
+
+</div>
+
+<div
+class="overlay"
+id="overlay"
+onclick="closeSidebar()">
+</div>
+
+<div class="container">
+
+  <div class="card">
+
+    <input
+      type="number"
+      id="jumlah"
+      class="input"
+      placeholder="Jumlah Pengeluaran"
+    >
+
+    <input
+      type="text"
+      id="keperluan"
+      class="input"
+      placeholder="Keperluan"
+    >
+
+    <button
+      class="btn"
+      onclick="simpanPengeluaran()"
+    >
+      SIMPAN PENGELUARAN
+    </button>
+
+  </div>
+
+  <div class="section-title">
+    Histori Pengeluaran
+  </div>
+
+  <div id="listPengeluaran">
+
+    <div class="empty">
+      Loading...
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+if (localStorage.getItem("loggedIn") !== "true") {
+  window.location.href = "login.html";
+}
+const URL =
+"https://script.google.com/macros/s/AKfycbxpzfOKXJkXqUJbz8b9WeJXJxti5CRSIslQVfVgXviPftSVap8mpqjfuTnZwuz-GOs/exec";
+
+function openSidebar(){
+
+  document
+  .getElementById("sidebar")
+  .classList.add("active");
+
+  document
+  .getElementById("overlay")
+  .classList.add("active");
+
+}
+
+function closeSidebar(){
+
+  document
+  .getElementById("sidebar")
+  .classList.remove("active");
+
+  document
+  .getElementById("overlay")
+  .classList.remove("active");
+
+}
+
+async function simpanPengeluaran(){
+
+  const jumlah =
+  document
+  .getElementById("jumlah")
+  .value;
+
+  const keperluan =
+  document
+  .getElementById("keperluan")
+  .value;
+
+  if(!jumlah || !keperluan){
+
+    alert("Lengkapi data");
+
+    return;
+
+  }
+
+  const res =
+  await fetch(
+
+`${URL}?action=addPengeluaran&jumlah=${jumlah}&keperluan=${encodeURIComponent(keperluan)}`
+
+  );
+
+  const result =
+  await res.text();
+
+  alert(result);
+
+  document
+  .getElementById("jumlah")
+  .value = "";
+
+  document
+  .getElementById("keperluan")
+  .value = "";
+
+  loadPengeluaran();
+
+}
+
+async function loadPengeluaran(){
+
+  const res =
+  await fetch(
+    `${URL}?action=getPengeluaran`
+  );
+
+  const data =
+  await res.json();
+
+  let html = "";
+
+  data.reverse().forEach(item=>{
+
+    html += `
+
+      <div class="item">
+
+        <div class="item-keperluan">
+          ${item.keperluan}
+        </div>
+
+        <div class="item-nominal">
+          - Rp ${Number(item.jumlah).toLocaleString("id-ID")}
+        </div>
+
+        <div class="item-tanggal">
+          ${new Date(item.tanggal).toLocaleString("id-ID")}
+        </div>
+
+      </div>
+
+    `;
+
+  });
+
+  if(data.length === 0){
+
+    html =
+    `<div class="empty">
+      Belum ada pengeluaran
+    </div>`;
+
+  }
+
+  document
+  .getElementById("listPengeluaran")
+  .innerHTML = html;
+
+}
+
+loadPengeluaran();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Angkringan Birawa</title>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#0d0d0d;
+  color:white;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+}
+
+/* BACKGROUND GLOW */
+.bg-glow{
+  position:absolute;
+  width:450px;
+  height:450px;
+  background:#facc15;
+  filter:blur(140px);
+  opacity:0.12;
+  border-radius:50%;
+  animation:float 6s ease-in-out infinite;
+}
+
+@keyframes float{
+  0%,100%{transform:translateY(0px);}
+  50%{transform:translateY(-40px);}
+}
+
+/* PARTICLES */
+.particle{
+  position:absolute;
+  width:6px;
+  height:6px;
+  background:#facc15;
+  border-radius:50%;
+  opacity:0.25;
+  animation:move 8s linear infinite;
+}
+
+@keyframes move{
+  0%{transform:translateY(100vh) scale(0);}
+  100%{transform:translateY(-10vh) scale(1);}
+}
+
+/* BOX */
+.box{
+  text-align:center;
+  z-index:2;
+  animation:fadeIn 1s ease forwards;
+  opacity:0;
+}
+
+@keyframes fadeIn{
+  from{opacity:0; transform:translateY(25px);}
+  to{opacity:1; transform:translateY(0);}
+}
+
+/* TITLE */
+h1{
+  color:#facc15;
+  margin-bottom:10px;
+  font-size:34px;
+  text-shadow:0 0 25px rgba(250,204,21,0.4);
+
+  animation:slideDown 1s ease forwards;
+  opacity:0;
+}
+
+@keyframes slideDown{
+  from{opacity:0; transform:translateY(-20px);}
+  to{opacity:1; transform:translateY(0);}
+}
+
+/* SUBTITLE */
+p{
+  color:#aaa;
+  margin-bottom:30px;
+
+  animation:fadeText 1.3s ease forwards;
+  opacity:0;
+}
+
+@keyframes fadeText{
+  from{opacity:0;}
+  to{opacity:1;}
+}
+
+/* BUTTON */
+button{
+  width:240px;
+  padding:15px;
+  margin:10px;
+  border:none;
+  border-radius:14px;
+  background:#facc15;
+  color:#111;
+  font-weight:bold;
+  cursor:pointer;
+
+  opacity:0;
+  transform:translateY(20px);
+  animation:btnIn 1.2s ease forwards;
+  animation-delay:0.7s;
+
+  transition:0.3s;
+}
+
+@keyframes btnIn{
+  0%{
+    opacity:0;
+    transform:translateY(20px) scale(0.9);
+  }
+  60%{
+    opacity:1;
+    transform:translateY(-5px) scale(1.05);
+  }
+  100%{
+    opacity:1;
+    transform:translateY(0) scale(1);
+  }
+}
+
+button:hover{
+  transform:scale(1.08);
+  box-shadow:0 0 25px rgba(250,204,21,0.4);
+}
+
+/* FADE OUT */
+.fade-out{
+  opacity:0;
+  transition:0.5s ease;
+}
+
+/* ========================= */
+/* FOOTER ANIMASI KEREN */
+/* ========================= */
+
+footer.footer{
+  position:fixed;
+  bottom:15px;
+  left:50%;
+  transform:translateX(-50%);
+
+  display:flex;
+  align-items:center;
+  gap:8px;
+
+  padding:10px 16px;
+  border-radius:999px;
+
+  background:rgba(20,20,20,0.6);
+  backdrop-filter:blur(10px);
+
+  color:#aaa;
+  font-size:12px;
+
+  border:1px solid rgba(250,204,21,0.15);
+
+  animation:footerIn 1.2s ease forwards;
+  opacity:0;
+}
+
+/* masuk animasi */
+@keyframes footerIn{
+  from{
+    opacity:0;
+    transform:translateX(-50%) translateY(20px);
+  }
+  to{
+    opacity:1;
+    transform:translateX(-50%) translateY(0);
+  }
+}
+
+/* dot hidup */
+footer.footer .dot{
+  color:#facc15;
+  animation:pulse 1.5s infinite;
+}
+
+@keyframes pulse{
+  0%,100%{opacity:0.3; transform:scale(1);}
+  50%{opacity:1; transform:scale(1.3);}
+}
+
+/* hover effect */
+footer.footer:hover{
+  border-color:rgba(250,204,21,0.4);
+  transform:translateX(-50%) scale(1.05);
+  transition:0.3s;
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<!-- PARTICLES -->
+<script>
+for(let i=0;i<18;i++){
+  let p = document.createElement("div");
+  p.className = "particle";
+  p.style.left = Math.random()*100 + "vw";
+  p.style.animationDuration = (5+Math.random()*5) + "s";
+  document.body.appendChild(p);
+}
+</script>
+
+<div class="box">
+
+  <h1>Selamat Datang Di</h1>
+  <p>Angkringan Birawa</p>
+
+  <button onclick="goLogin()">
+    GASS DAGANG
+  </button>
+
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <span>© 2026 Birawa</span>
+  <span class="dot">•</span>
+  <span>By P4170</span>
+</footer>
+
+<script>
+
+function goLogin(){
+  document.body.classList.add("fade-out");
+
+  setTimeout(()=>{
+    window.location.href = "login.html";
+  },500);
+}
+
+</script>
+
+</body>
+</html>

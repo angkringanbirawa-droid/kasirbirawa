@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BirawaPOS</title>
+
+  <style>
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:Arial,sans-serif;
+    }
+
+    body{
+      background:#111;
+      color:white;
+    }
+
+    /* HEADER */
+
+    .header{
+      width:100%;
+      padding:18px 20px;
+      background:#1b1b1b;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      position:sticky;
+      top:0;
+      z-index:100;
+      box-shadow:0 2px 10px rgba(0,0,0,0.4);
+    }
+
+    .menu-btn{
+      font-size:28px;
+      cursor:pointer;
+    }
+
+    .title{
+      font-size:20px;
+      font-weight:bold;
+      color:#facc15;
+    }
+
+    /* SIDEBAR */
+
+    .sidebar{
+      width:270px;
+      height:100vh;
+      background:#1c1c1c;
+      position:fixed;
+      top:0;
+      left:-270px;
+      transition:0.3s;
+      z-index:999;
+      overflow-y:auto;
+    }
+
+    .sidebar.active{
+      left:0;
+    }
+
+    /* PROFILE */
+
+    .profile-box{
+      padding:30px 20px;
+      text-align:center;
+      border-bottom:1px solid #2c2c2c;
+    }
+
+    .profile-img{
+      width:85px;
+      height:85px;
+      border-radius:50%;
+      border:3px solid #facc15;
+      background:white;
+      margin-bottom:12px;
+    }
+
+    .profile-name{
+      font-size:18px;
+      font-weight:bold;
+      color:white;
+    }
+
+    .profile-role{
+      font-size:13px;
+      color:#999;
+      margin-top:5px;
+    }
+
+    /* SIDEBAR MENU */
+
+    .sidebar a{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      padding:17px 20px;
+      color:white;
+      text-decoration:none;
+      border-bottom:1px solid #2a2a2a;
+      transition:0.2s;
+    }
+
+    .sidebar a:hover{
+      background:#2d2d2d;
+    }
+
+    .icon{
+      font-size:21px;
+    }
+
+    /* OVERLAY */
+
+    .overlay{
+      position:fixed;
+      width:100%;
+      height:100vh;
+      background:rgba(0,0,0,0.5);
+      top:0;
+      left:0;
+      display:none;
+      z-index:998;
+    }
+
+    .overlay.active{
+      display:block;
+    }
+
+    /* CONTENT */
+
+    .content{
+      padding:20px;
+    }
+
+    /* QUICK MENU */
+
+    .quick-menu{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:10px;
+      margin-bottom:25px;
+    }
+
+    .quick-btn{
+      background:#1f1f1f;
+      padding:16px 8px;
+      border-radius:16px;
+      text-align:center;
+      font-size:12px;
+      border:1px solid #2c2c2c;
+      cursor:pointer;
+      transition:0.2s;
+      min-height:100px;
+
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+    }
+
+    .quick-btn:hover{
+      transform:translateY(-3px);
+      background:#292929;
+    }
+
+    .quick-icon{
+      font-size:24px;
+      margin-bottom:8px;
+    }
+
+    /* CARD */
+
+    .card{
+      background:#1d1d1d;
+      border-radius:18px;
+      padding:20px;
+      margin-bottom:18px;
+      border:1px solid #2a2a2a;
+    }
+
+    .card-title{
+      font-size:14px;
+      color:#999;
+      margin-bottom:12px;
+    }
+
+    .card-value{
+      font-size:30px;
+      font-weight:bold;
+      color:#facc15;
+    }
+
+    .small-link{
+      margin-top:12px;
+      display:inline-block;
+      color:#aaa;
+      font-size:13px;
+      cursor:pointer;
+    }
+
+    /* GRID */
+
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:15px;
+    }
+
+    /* FOOTER */
+
+   footer{
+  width:100%;
+  box-sizing:border-box;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  text-align:center;
+
+  padding:20px 10px;
+  margin-top:30px;
+
+  color:#645f20;
+  font-size:clamp(10px, 3vw, 13px);
+  border-top:1px solid #222;
+}
+
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+
+  <div class="header">
+
+    <div class="menu-btn" onclick="openSidebar()">
+      ☰
+    </div>
+
+    <div class="title">
+      BIRAWA KASIR
+    </div>
+
+    <div></div>
+
+  </div>
+
+  <!-- SIDEBAR -->
+
+  <div class="sidebar" id="sidebar">
+
+    <!-- PROFILE -->
+
+    <div class="profile-box">
+
+      <img 
+        src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+        class="profile-img"
+      >
+
+      <div class="profile-name" id="profileName">
+        INI GUE
+      </div>
+
+      <div class="profile-role">
+        Karyawan Teladan
+      </div>
+
+    </div>
+
+    <!-- MENU -->
+
+    <a href="absensi.html">
+      <span class="icon">🕒</span>
+      Absensi
+    </a>
+
+    <a href="input.html" class="menu-owner">
+      <span class="icon">🍜</span>
+      Kelola Produk
+    </a>
+
+    <a href="transaksi.html" class="menu-karyawan">
+      <span class="icon">💰</span>
+      Transaksi
+    </a>
+
+    <a href="histori.html" class="menu-karyawan">
+      <span class="icon">🧾</span>
+      Histori Transaksi
+    </a>
+
+    <a href="regpeg.html" class="menu-owner">
+      <span class="icon">👨‍🍳</span>
+      Pendaftaran Pegawai
+    </a>
+
+    <a href="#">
+      <span class="icon">🖨️</span>
+      Pengaturan Printer
+    </a>
+
+    <a href="#" onclick="logout()">
+      <span class="icon">🚪</span>
+      Logout
+    </a>
+
+  </div>
+
+  <!-- OVERLAY -->
+
+  <div 
+    class="overlay" 
+    id="overlay"
+    onclick="closeSidebar()"
+  ></div>
+
+  <!-- CONTENT -->
+
+  <div class="content">
+
+<!-- QUICK MENU -->
+
+<div class="quick-menu">
+
+  <div 
+    class="quick-btn"
+    onclick="window.location.href='transaksi.html'"
+  >
+
+    <div class="quick-icon">
+      💰
+    </div>
+
+    <span>
+      Transaksi
+    </span>
+
+  </div>
+
+  <div class="quick-btn"
+    onclick="window.location.href='pengeluaran.html'"
+  >
+
+    <div class="quick-icon">
+      📊
+    </div>
+
+    <span>
+      Pengeluran
+    </span>
+
+  </div>
+
+  <div 
+  class="quick-btn"
+
+    onclick="window.location.href='histori.html'"
+    >
+    <div class="quick-icon">
+      🧾
+    </div>
+
+    <span>
+      Histori
+    </span>
+
+  </div>
+
+</div>
+
+    <!-- OMSET -->
+
+    <div class="card">
+
+      <div class="card-title">
+        Pemasukan
+      </div>
+
+      <div class="card-value"id="omsetHariIni">
+        Rp 0
+      </div>
+
+      <div class="small-link"
+        onclick="window.location.href='histori.html'"
+        >
+        Lihat Selengkapnya
+      </div>
+
+    </div>
+
+    <!-- GRID -->
+
+    <div class="grid">
+
+      <!-- PENGELUARAN -->
+
+      <div class="card">
+
+        <div class="card-title">
+          Pengeluaran
+        </div>
+
+        <div class="card-value"id="pengeluaranHariIni">
+          Rp 0
+        </div>
+        <div class="small-link"
+        onclick="window.location.href='pengeluaran.html'"
+        >
+        Selengkapnya
+      </div>
+
+      </div>
+
+       <!-- Total Setelah dikurangi keluar -->
+
+      <div class="card">
+
+        <div class="card-title">
+          OMSET HARI INI
+        </div>
+
+        <div class="card-value"id="labaHariIni">
+          Rp 0
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+
+  <footer>
+    Birawa 2026 | BY P4170
+  </footer>
+
+  <script>
+if (localStorage.getItem("loggedIn") !== "true") {
+  window.location.href = "login.html";
+}
+    // SIDEBAR
+
+    function openSidebar(){
+
+      document
+      .getElementById("sidebar")
+      .classList.add("active");
+
+      document
+      .getElementById("overlay")
+      .classList.add("active");
+
+    }
+
+    function closeSidebar(){
+
+      document
+      .getElementById("sidebar")
+      .classList.remove("active");
+
+      document
+      .getElementById("overlay")
+      .classList.remove("active");
+
+    }
+
+    // USER LOGIN
+
+    const username =
+    localStorage.getItem("username");
+
+    if(username){
+
+      document
+      .getElementById("profileName")
+      .innerText = username;
+
+    }
+
+    // LOGOUT
+
+    function logout(){
+
+      const confirmLogout =
+      confirm("Yakin mau logout?");
+
+      if(confirmLogout){
+
+        localStorage.clear();
+
+        window.location.href = "login.html";
+
+      }
+
+    }
+const HISTORY_URL =
+"https://script.google.com/macros/s/AKfycbxpzfOKXJkXqUJbz8b9WeJXJxti5CRSIslQVfVgXviPftSVap8mpqjfuTnZwuz-GOs/exec";
+let omsetHariIni = 0;
+let pengeluaranHariIni = 0;
+async function loadOmsetHariIni(){
+
+  try{
+
+    const res =
+    await fetch(
+      `${HISTORY_URL}?action=getHistory`
+    );
+
+    const data =
+    await res.json();
+
+    const sekarang =
+    new Date();
+
+    const hariIni =
+    sekarang.getDate();
+
+    const bulanIni =
+    sekarang.getMonth();
+
+    const tahunIni =
+    sekarang.getFullYear();
+
+    omsetHariIni = 0;
+
+    data.forEach(item => {
+
+      const tgl =
+      new Date(item.tanggal);
+
+      if(
+        tgl.getDate() === hariIni &&
+        tgl.getMonth() === bulanIni &&
+        tgl.getFullYear() === tahunIni
+      ){
+
+        omsetHariIni +=
+        Number(item.total);
+
+      }
+
+    });
+
+    document
+    .getElementById("omsetHariIni")
+    .innerText =
+    "Rp " +
+    omsetHariIni.toLocaleString("id-ID");
+    hitungLabaHariIni();
+
+  }catch(err){
+
+    console.log(
+      "Gagal load omset",
+      err
+    );
+
+  }
+
+}
+async function loadPengeluaranHariIni(){
+
+  try{
+
+    const res =
+    await fetch(
+      `${HISTORY_URL}?action=getPengeluaran`
+    );
+
+    const data =
+    await res.json();
+
+    const sekarang =
+    new Date();
+
+    pengeluaranHariIni = 0;
+
+    data.forEach(item=>{
+
+      const tgl =
+      new Date(item.tanggal);
+
+      if(
+        tgl.getDate() === sekarang.getDate() &&
+        tgl.getMonth() === sekarang.getMonth() &&
+        tgl.getFullYear() === sekarang.getFullYear()
+      ){
+
+        pengeluaranHariIni +=
+        Number(item.jumlah);
+
+      }
+
+    });
+
+    document
+    .getElementById("pengeluaranHariIni")
+    .innerText =
+    "Rp " +
+    pengeluaranHariIni.toLocaleString("id-ID");
+
+    hitungLabaHariIni();
+
+  }catch(err){
+
+    console.log(err);
+
+  }
+
+}
+function hitungLabaHariIni(){
+
+  const laba =
+  omsetHariIni -
+  pengeluaranHariIni;
+
+  document
+  .getElementById("labaHariIni")
+  .innerText =
+  "Rp " +
+  laba.toLocaleString("id-ID");
+
+}
+loadOmsetHariIni();
+loadPengeluaranHariIni();
+const role =
+localStorage.getItem("role");
+
+if(role === "karyawan"){
+
+  document
+  .querySelectorAll(".menu-owner")
+  .forEach(menu=>{
+    menu.style.display = "none";
+  });
+
+}
+  </script>
+
+</body>
+</html>

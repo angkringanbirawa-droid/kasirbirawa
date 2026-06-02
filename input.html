@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Input Produk - BirawaPOS</title>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#111;
+  color:white;
+  padding:20px;
+}
+
+/* HEADER */
+
+.header{
+  display:flex;
+  align-items:center;
+  gap:15px;
+  margin-bottom:25px;
+}
+
+.back{
+  width:45px;
+  height:45px;
+  border-radius:12px;
+  background:#facc15;
+  color:#111;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:22px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.title{
+  font-size:24px;
+  font-weight:bold;
+  color:#facc15;
+}
+
+/* CARD */
+
+.card{
+  background:#1d1d1d;
+  border:1px solid #2a2a2a;
+  border-radius:20px;
+  padding:20px;
+  max-width:550px;
+  margin:auto;
+  margin-bottom:20px;
+}
+
+/* FORM */
+
+.label{
+  margin-bottom:8px;
+  color:#ccc;
+  font-size:14px;
+}
+
+input{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  background:#2b2b2b;
+  color:white;
+  margin-bottom:18px;
+  outline:none;
+}
+
+.main-btn{
+  width:100%;
+  padding:15px;
+  border:none;
+  border-radius:14px;
+  background:#facc15;
+  color:#111;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.main-btn:hover{
+  opacity:0.9;
+}
+
+.info{
+  text-align:center;
+  margin-top:15px;
+  color:#aaa;
+}
+
+/* LIST */
+
+.list-title{
+  font-size:22px;
+  color:#facc15;
+  margin-bottom:15px;
+  text-align:center;
+}
+
+.product-list{
+  max-width:550px;
+  margin:auto;
+}
+
+.product-card{
+  background:#1d1d1d;
+  border:1px solid #2a2a2a;
+  border-radius:18px;
+  padding:15px;
+  margin-bottom:15px;
+
+  display:flex;
+  gap:15px;
+  align-items:center;
+}
+
+.product-img{
+  width:90px;
+  height:90px;
+  border-radius:14px;
+  object-fit:cover;
+  background:#2b2b2b;
+}
+
+.product-info{
+  flex:1;
+}
+
+/* TOP */
+
+.product-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:8px;
+}
+
+.product-name{
+  font-size:18px;
+  font-weight:bold;
+  color:#facc15;
+}
+
+.product-detail{
+  color:#ccc;
+  font-size:14px;
+  margin-bottom:4px;
+}
+
+/* AKSI */
+
+.aksi{
+  display:flex;
+  gap:8px;
+}
+
+.icon-btn{
+  width:36px;
+  height:36px;
+  border:none;
+  border-radius:10px;
+  background:#2b2b2b;
+  color:white;
+  font-size:16px;
+  cursor:pointer;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.icon-btn:hover{
+  background:#3a3a3a;
+}
+
+.delete{
+  background:#5a1d1d;
+}
+
+.delete:hover{
+  background:#7a2424;
+}
+
+/* EMPTY */
+
+.empty{
+  text-align:center;
+  color:#777;
+  margin-top:20px;
+}
+
+.loading{
+  text-align:center;
+  color:#facc15;
+  margin-top:20px;
+}
+
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+
+<div class="header">
+
+  <div 
+    class="back"
+    onclick="window.location.href='data.html'"
+  >
+    ←
+  </div>
+
+  <div class="title">
+    Input Produk
+  </div>
+
+</div>
+
+<!-- FORM -->
+
+<div class="card">
+
+  <div class="label">
+    Nama Produk
+  </div>
+
+  <input
+    type="text"
+    id="nama"
+    placeholder="Contoh : Es Teh"
+  >
+
+  <div class="label">
+    Harga
+  </div>
+
+  <input
+    type="number"
+    id="harga"
+    placeholder="Contoh : 5000"
+  >
+
+  <div class="label">
+    Stok
+  </div>
+
+  <input
+    type="number"
+    id="stok"
+    placeholder="Contoh : 10"
+  >
+
+  <div class="label">
+    URL Foto
+  </div>
+
+  <input
+    type="text"
+    id="foto"
+    placeholder="https://..."
+  >
+
+  <button
+    class="main-btn"
+    onclick="tambahProduk()"
+  >
+    SIMPAN PRODUK
+  </button>
+
+  <div class="info" id="info"></div>
+
+</div>
+
+<!-- LIST -->
+
+<div class="product-list">
+
+  <div class="list-title">
+    Daftar Produk
+  </div>
+
+  <div id="produkContainer">
+
+    <div class="loading">
+      Loading produk...
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+if (localStorage.getItem("loggedIn") !== "true") {
+  window.location.href = "login.html";
+}
+const URL =
+"https://script.google.com/macros/s/AKfycbwN6qlNF9VBj7ysb79rVd_AkNSg2jYC22xYwGR6fxLNlur20cu1AYKtS8j0xQb4yNJX/exec";
+
+
+// =========================
+// EDIT MODE
+// =========================
+
+let editMode = false;
+let oldNama = "";
+
+
+// =========================
+// TAMBAH / UPDATE PRODUK
+// =========================
+
+async function tambahProduk(){
+
+  const nama =
+  document.getElementById("nama").value;
+
+  const harga =
+  document.getElementById("harga").value;
+
+  const stok =
+  document.getElementById("stok").value;
+
+  const foto =
+  document.getElementById("foto").value;
+
+
+  if(!nama || !harga || !stok){
+
+    alert("Lengkapi data produk");
+
+    return;
+
+  }
+
+  document
+  .getElementById("info")
+  .innerText =
+  "Menyimpan produk...";
+
+  try{
+
+    let action = "addProduct";
+
+    if(editMode){
+      action = "editProduct";
+    }
+
+    const response =
+    await fetch(
+
+      `${URL}?action=${action}&old_nama=${encodeURIComponent(oldNama)}&nama_barang=${encodeURIComponent(nama)}&harga=${encodeURIComponent(harga)}&stok=${encodeURIComponent(stok)}&url_foto=${encodeURIComponent(foto)}`
+
+    );
+
+    const result =
+    await response.text();
+
+    document
+    .getElementById("info")
+    .innerText =
+    result;
+
+    // RESET
+
+    document.getElementById("nama").value = "";
+    document.getElementById("harga").value = "";
+    document.getElementById("stok").value = "";
+    document.getElementById("foto").value = "";
+
+    // RESET MODE
+
+    editMode = false;
+
+    oldNama = "";
+
+    document.querySelector(".main-btn")
+    .innerText = "SIMPAN PRODUK";
+
+    // RELOAD
+
+    loadProduk();
+
+  }catch(error){
+
+    document
+    .getElementById("info")
+    .innerText =
+    "Server error";
+
+    console.log(error);
+
+  }
+
+}
+
+
+// =========================
+// LOAD PRODUK
+// =========================
+
+async function loadProduk(){
+
+  try{
+
+    const response =
+    await fetch(
+      `${URL}?action=getProducts`
+    );
+
+    const data =
+    await response.json();
+
+    renderProduk(data);
+
+  }catch(error){
+
+    document
+    .getElementById("produkContainer")
+    .innerHTML = `
+      <div class="empty">
+        Gagal load produk
+      </div>
+    `;
+
+    console.log(error);
+
+  }
+
+}
+
+
+// =========================
+// RENDER PRODUK
+// =========================
+
+function renderProduk(data){
+
+  const container =
+  document.getElementById("produkContainer");
+
+  if(data.length === 0){
+
+    container.innerHTML = `
+      <div class="empty">
+        Belum ada produk
+      </div>
+    `;
+
+    return;
+
+  }
+
+  let html = "";
+
+  data.reverse().forEach(item => {
+
+    html += `
+
+      <div class="product-card">
+
+        <img
+          src="${item.url_foto || 'https://via.placeholder.com/100'}"
+          class="product-img"
+        >
+
+        <div class="product-info">
+
+          <!-- TOP -->
+
+          <div class="product-top">
+
+            <div class="product-name">
+              ${item.nama_barang}
+            </div>
+
+            <div class="aksi">
+
+              <button
+                class="icon-btn"
+                onclick='editProduk(
+                  "${item.nama_barang}",
+                  "${item.harga}",
+                  "${item.stok}",
+                  "${item.url_foto}"
+                )'
+              >
+                ✏️
+              </button>
+
+              <button
+                class="icon-btn delete"
+                onclick='hapusProduk("${item.nama_barang}")'
+              >
+                🗑️
+              </button>
+
+            </div>
+
+          </div>
+
+          <!-- DETAIL -->
+
+          <div class="product-detail">
+            💰 Rp ${Number(item.harga).toLocaleString("id-ID")}
+          </div>
+
+          <div class="product-detail">
+            📦 Stok : ${item.stok}
+          </div>
+
+        </div>
+
+      </div>
+
+    `;
+
+  });
+
+  container.innerHTML = html;
+
+}
+
+
+// =========================
+// EDIT PRODUK
+// =========================
+
+function editProduk(
+  nama,
+  harga,
+  stok,
+  foto
+){
+
+  editMode = true;
+
+  oldNama = nama;
+
+  document.getElementById("nama").value = nama;
+  document.getElementById("harga").value = harga;
+  document.getElementById("stok").value = stok;
+  document.getElementById("foto").value = foto;
+
+  document.querySelector(".main-btn")
+  .innerText = "UPDATE PRODUK";
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+
+  document
+  .getElementById("info")
+  .innerText =
+  "Mode edit produk";
+
+}
+
+
+// =========================
+// HAPUS PRODUK
+// =========================
+
+async function hapusProduk(nama){
+
+  const yakin =
+  confirm(`Hapus ${nama}?`);
+
+  if(!yakin) return;
+
+  try{
+
+    const response =
+    await fetch(
+      `${URL}?action=deleteProduct&nama_barang=${encodeURIComponent(nama)}`
+    );
+
+    const result =
+    await response.text();
+
+    alert(result);
+
+    loadProduk();
+
+  }catch(error){
+
+    alert("Gagal hapus");
+
+    console.log(error);
+
+  }
+
+}
+
+
+// =========================
+// AUTO LOAD
+// =========================
+
+loadProduk();
+
+</script>
+
+</body>
+</html>

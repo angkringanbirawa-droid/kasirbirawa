@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Histori Transaksi</title>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#111;
+  color:white;
+  padding:20px;
+}
+
+.container{
+  max-width:700px;
+  margin:auto;
+}
+
+.card{
+  background:#1d1d1d;
+  border:1px solid #2a2a2a;
+  border-radius:18px;
+  padding:20px;
+}
+
+h2{
+  text-align:center;
+  color:#facc15;
+  margin-bottom:20px;
+}
+
+.filter{
+  display:flex;
+  gap:10px;
+  margin-bottom:20px;
+}
+
+select{
+  flex:1;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  background:#2b2b2b;
+  color:white;
+}
+
+.summary{
+  background:#2b2b2b;
+  padding:15px;
+  border-radius:12px;
+  margin-bottom:20px;
+  text-align:center;
+}
+
+.summary h3{
+  color:#aaa;
+  font-size:14px;
+  margin-bottom:8px;
+}
+
+.summary .omset{
+  color:#facc15;
+  font-size:26px;
+  font-weight:bold;
+}
+
+.item{
+  background:#2b2b2b;
+  border-radius:12px;
+  padding:15px;
+  margin-bottom:12px;
+}
+
+.top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:8px;
+}
+
+.id{
+  color:#facc15;
+  font-weight:bold;
+}
+
+.total{
+  color:#00e676;
+  font-weight:bold;
+}
+
+.detail{
+  color:#ccc;
+  font-size:14px;
+  margin-top:4px;
+}
+
+.empty{
+  text-align:center;
+  color:#888;
+  margin-top:30px;
+}
+.header{
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:#1b1b1b;
+  padding:15px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:-20px -20px 20px -20px;
+}
+
+.menu-btn{
+  font-size:28px;
+  cursor:pointer;
+}
+
+.title{
+  color:#facc15;
+  font-weight:bold;
+}
+
+.sidebar{
+  width:270px;
+  height:100vh;
+  background:#1c1c1c;
+  position:fixed;
+  top:0;
+  left:-270px;
+  transition:.3s;
+  z-index:999;
+}
+
+.sidebar.active{
+  left:0;
+}
+
+.sidebar a{
+  display:block;
+  color:white;
+  text-decoration:none;
+  padding:16px 20px;
+  border-bottom:1px solid #2b2b2b;
+}
+
+.sidebar a:hover{
+  background:#2b2b2b;
+}
+
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  display:none;
+  z-index:998;
+}
+
+.overlay.active{
+  display:block;
+}
+
+.profile-box{
+  text-align:center;
+  padding:25px;
+  border-bottom:1px solid #333;
+}
+
+.profile-img{
+  width:80px;
+  height:80px;
+  border-radius:50%;
+  border:3px solid #facc15;
+}
+
+.profile-name{
+  margin-top:10px;
+  font-weight:bold;
+}
+.item.masuk{
+  border-left:5px solid #00e676;
+}
+
+.item.keluar{
+  border-left:5px solid #ff5252;
+}
+
+.nominal-masuk{
+  color:#00e676;
+  font-weight:bold;
+}
+
+.nominal-keluar{
+  color:#ff5252;
+  font-weight:bold;
+}
+
+.tipe{
+  font-size:12px;
+  margin-top:5px;
+  color:#aaa;
+}
+
+</style>
+</head>
+<body>
+    <div class="header">
+
+  <div class="menu-btn" onclick="openSidebar()">
+    ☰
+  </div>
+
+  <div class="title">
+    HISTORI TRANSAKSI
+  </div>
+
+  <div></div>
+
+</div>
+
+<div class="sidebar" id="sidebar">
+
+  <div class="profile-box">
+
+    <img
+      src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+      class="profile-img"
+    >
+
+    <div class="profile-name" id="profileName">
+      User
+    </div>
+
+  </div>
+
+  <a href="data.html">🏠 Dashboard</a>
+
+  <a href="absensi.html">🕒 Absensi</a>
+
+  <a href="input.html">📦 Kelola Produk</a>
+
+  <a href="#">💰 Transaksi</a>
+
+  <a href="histori.html">🧾 Histori</a>
+
+  <a href="#" onclick="logout()">🚪 Logout</a>
+
+</div>
+
+<div
+  class="overlay"
+  id="overlay"
+  onclick="closeSidebar()"
+></div>
+
+<div class="container">
+
+<div class="card">
+
+<h2>HISTORI TRANSAKSI</h2>
+
+<div class="filter">
+
+<select id="bulan" onchange="filterData()">
+<option value="">Bulan</option>
+<option value="1">Januari</option>
+<option value="2">Februari</option>
+<option value="3">Maret</option>
+<option value="4">April</option>
+<option value="5">Mei</option>
+<option value="6">Juni</option>
+<option value="7">Juli</option>
+<option value="8">Agustus</option>
+<option value="9">September</option>
+<option value="10">Oktober</option>
+<option value="11">November</option>
+<option value="12">Desember</option>
+</select>
+
+<select id="tahun" onchange="filterData()">
+<option value="">Tahun</option>
+</select>
+
+</div>
+
+<div class="summary">
+
+<h3>Total Omset</h3>
+
+<div class="omset" id="totalOmset">
+Rp 0
+</div>
+
+</div>
+
+<div id="list"></div>
+
+</div>
+
+</div>
+
+<script>
+if (localStorage.getItem("loggedIn") !== "true") {
+  window.location.href = "login.html";
+}
+const URL =
+"https://script.google.com/macros/s/AKfycbxpzfOKXJkXqUJbz8b9WeJXJxti5CRSIslQVfVgXviPftSVap8mpqjfuTnZwuz-GOs/exec";
+
+let allData = [];
+
+// =====================
+// TAHUN
+// =====================
+
+for(let i=2030;i>=2025;i--){
+
+document.getElementById("tahun")
+.innerHTML += `
+<option value="${i}">
+${i}
+</option>
+`;
+
+}
+
+// =====================
+// LOAD
+// =====================
+
+async function loadHistory(){
+
+try{
+
+const [trxRes,pengRes] =
+await Promise.all([
+  fetch(`${URL}?action=getHistory`),
+  fetch(`${URL}?action=getPengeluaran`)
+]);
+
+const transaksi =
+await trxRes.json();
+
+const pengeluaran =
+await pengRes.json();
+
+const gabungan = [];
+
+// TRANSAKSI
+
+transaksi.forEach(item=>{
+
+  gabungan.push({
+    tipe:"masuk",
+    id:item.id,
+    tanggal:item.tanggal,
+    metode:item.metode,
+    nominal:Number(item.total)
+  });
+
+});
+
+// PENGELUARAN
+
+pengeluaran.forEach(item=>{
+
+  gabungan.push({
+    tipe:"keluar",
+    tanggal:item.tanggal,
+    keterangan:item.keterangan || "Pengeluaran",
+    nominal:Number(item.jumlah)
+  });
+
+});
+
+// URUTKAN TERBARU
+
+gabungan.sort((a,b)=>
+new Date(b.tanggal) -
+new Date(a.tanggal)
+);
+
+allData = gabungan;
+
+renderData(gabungan);
+
+}catch(err){
+
+document.getElementById("list")
+.innerHTML =
+"<div class='empty'>Gagal memuat data</div>";
+
+console.log(err);
+
+}
+
+}
+
+// =====================
+// FILTER
+// =====================
+
+function filterData(){
+
+const bulan =
+document.getElementById("bulan").value;
+
+const tahun =
+document.getElementById("tahun").value;
+
+const filtered =
+allData.filter(item=>{
+
+const date =
+new Date(item.tanggal);
+
+const b =
+date.getMonth()+1;
+
+const t =
+date.getFullYear();
+
+const cocokBulan =
+bulan=="" || b==bulan;
+
+const cocokTahun =
+tahun=="" || t==tahun;
+
+return cocokBulan && cocokTahun;
+
+});
+
+renderData(filtered);
+
+}
+
+// =====================
+// RENDER
+// =====================
+
+function renderData(data){
+
+let html = "";
+
+let totalMasuk = 0;
+let totalKeluar = 0;
+
+if(data.length === 0){
+
+html =
+"<div class='empty'>Belum ada data</div>";
+
+}else{
+
+data.forEach(item=>{
+
+if(item.tipe === "masuk"){
+
+totalMasuk += item.nominal;
+
+html += `
+
+<div class="item masuk"
+ onclick="toggleDetail('${item.id}')"
+  style="cursor:pointer"
+>
+
+<div class="top">
+
+<div class="id">
+${item.id}
+</div>
+
+<div class="nominal-masuk">
++ Rp ${formatRupiah(item.nominal)}
+</div>
+
+</div>
+
+<div class="detail">
+📅 ${formatTanggal(item.tanggal)}
+</div>
+
+<div class="tipe">
+💰 Transaksi (${item.metode})
+</div>
+<div
+  id="detail-${item.id}"
+  style="
+    display:none;
+    margin-top:10px;
+    padding-top:10px;
+    border-top:1px solid #444;
+  "
+></div>
+</div>
+
+`;
+
+}else{
+
+totalKeluar += item.nominal;
+
+html += `
+
+<div class="item keluar">
+
+<div class="top">
+
+<div class="id">
+${item.keterangan}
+</div>
+
+<div class="nominal-keluar">
+- Rp ${formatRupiah(item.nominal)}
+</div>
+
+</div>
+
+<div class="detail">
+📅 ${formatTanggal(item.tanggal)}
+</div>
+
+<div class="tipe">
+📉 Pengeluaran
+</div>
+
+</div>
+
+`;
+
+}
+
+});
+
+}
+
+const laba =
+totalMasuk - totalKeluar;
+
+document.getElementById("totalOmset")
+.innerHTML = `
+<div style="color:#00e676">
+Masuk : Rp ${formatRupiah(totalMasuk)}
+</div>
+
+<div style="color:#ff5252;margin-top:8px">
+Keluar : Rp ${formatRupiah(totalKeluar)}
+</div>
+
+<div style="
+margin-top:10px;
+font-size:28px;
+font-weight:bold;
+color:#facc15">
+Saldo : Rp ${formatRupiah(laba)}
+</div>
+`;
+
+document.getElementById("list")
+.innerHTML = html;
+
+}
+
+// =====================
+// FORMAT
+// =====================
+
+function formatTanggal(tanggal){
+
+const d =
+new Date(tanggal);
+
+return d.toLocaleString(
+"id-ID",
+{
+day:"2-digit",
+month:"long",
+year:"numeric",
+hour:"2-digit",
+minute:"2-digit"
+}
+);
+
+}
+
+function formatRupiah(angka){
+
+return Number(angka)
+.toLocaleString("id-ID");
+
+}
+function openSidebar(){
+
+  document
+  .getElementById("sidebar")
+  .classList.add("active");
+
+  document
+  .getElementById("overlay")
+  .classList.add("active");
+
+}
+
+function closeSidebar(){
+
+  document
+  .getElementById("sidebar")
+  .classList.remove("active");
+
+  document
+  .getElementById("overlay")
+  .classList.remove("active");
+
+}
+
+const username =
+localStorage.getItem("username");
+
+if(username){
+
+  document
+  .getElementById("profileName")
+  .innerText = username;
+
+}
+
+function logout(){
+
+  localStorage.clear();
+
+  window.location.href =
+  "login.html";
+
+}
+async function toggleDetail(id){
+
+  const box =
+  document.getElementById(
+    "detail-" + id
+  );
+
+  if(box.style.display === "block"){
+
+    box.style.display = "none";
+    return;
+
+  }
+
+  if(box.innerHTML.trim() !== ""){
+
+    box.style.display = "block";
+    return;
+
+  }
+
+  const res =
+  await fetch(
+    `${URL}?action=getDetail&id=${id}`
+  );
+
+  const data =
+  await res.json();
+
+  let html = "";
+
+  if(data.length === 0){
+
+    html =
+    "<div class='detail'>Tidak ada detail produk</div>";
+
+  }else{
+
+    data.forEach(item=>{
+
+      html += `
+      <div class="detail">
+        🍜 ${item.nama_produk}
+        (${item.qty}x)
+        - Rp ${formatRupiah(item.subtotal)}
+      </div>
+      `;
+
+    });
+
+  }
+
+  box.innerHTML = html;
+  box.style.display = "block";
+
+}
+loadHistory();
+
+</script>
+
+</body>
+</html>

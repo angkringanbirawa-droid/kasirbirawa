@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Absensi Pegawai</title>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#111;
+  color:white;
+  padding:20px;
+}
+
+/* MENU BUTTON */
+
+.menu-btn{
+  position:fixed;
+  top:15px;
+  left:15px;
+  width:45px;
+  height:45px;
+  background:#facc15;
+  color:#111;
+  border-radius:12px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:24px;
+  font-weight:bold;
+  z-index:9999;
+  cursor:pointer;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+  position:fixed;
+  top:0;
+  left:-250px;
+  width:220px;
+  height:100vh;
+  background:#1d1d1d;
+  padding-top:70px;
+  transition:0.3s;
+  z-index:9998;
+  border-right:1px solid #333;
+}
+
+.sidebar.active{
+  left:0;
+}
+
+.sidebar a{
+  display:block;
+  padding:15px 20px;
+  color:white;
+  text-decoration:none;
+  border-bottom:1px solid #2a2a2a;
+}
+
+.sidebar a:hover{
+  background:#2b2b2b;
+}
+
+.container{
+  max-width:550px;
+  margin:auto;
+  margin-top:40px;
+}
+
+.card{
+  background:#1d1d1d;
+  border:1px solid #2a2a2a;
+  border-radius:20px;
+  padding:20px;
+}
+
+h2{
+  text-align:center;
+  color:#facc15;
+  margin-bottom:20px;
+}
+
+button{
+  width:100%;
+  padding:15px;
+  border:none;
+  border-radius:12px;
+  background:#facc15;
+  color:#111;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button:hover{
+  opacity:0.9;
+}
+
+.info{
+  text-align:center;
+  margin-top:15px;
+  color:#aaa;
+}
+
+.list{
+  margin-top:15px;
+}
+
+.item{
+  background:#2b2b2b;
+  border-radius:14px;
+  padding:15px;
+  margin-bottom:12px;
+}
+
+.nama{
+  color:#facc15;
+  font-size:18px;
+  font-weight:bold;
+  margin-bottom:8px;
+}
+
+.detail{
+  color:#ccc;
+  font-size:14px;
+  margin-top:4px;
+}
+
+.empty{
+  text-align:center;
+  color:#777;
+  margin-top:20px;
+}
+
+.filter-box{
+  display:flex;
+  gap:10px;
+  margin-bottom:20px;
+}
+
+select{
+  flex:1;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  background:#2b2b2b;
+  color:white;
+  outline:none;
+}
+
+</style>
+</head>
+<body>
+
+<!-- MENU BUTTON -->
+
+<div class="menu-btn" onclick="toggleSidebar()">
+  ☰
+</div>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar" id="sidebar">
+
+  <a href="data.html">
+    🏠 Dashboard
+  </a>
+
+  <a href="produk.html">
+    📦 Kelola Produk
+  </a>
+
+  <a href="absensi.html">
+    🕒 Absensi
+  </a>
+
+  <a href="regpeg.html">
+    👤 Registrasi Pegawai
+  </a>
+
+</div>
+
+<div class="container">
+
+  <div class="card">
+
+    <h2 id="judul">
+      ABSENSI
+    </h2>
+
+    <!-- KARYAWAN -->
+    <div id="karyawanBox" style="display:none;">
+
+      <button onclick="absenMasuk()">
+        ABSEN MASUK
+      </button>
+
+      <div class="info" id="infoAbsen"></div>
+
+    </div>
+
+    <!-- OWNER -->
+    <div id="ownerBox" style="display:none;">
+
+      <!-- FILTER -->
+      <div class="filter-box">
+
+        <select id="filterBulan" onchange="filterAbsensi()">
+
+          <option value="">
+            Semua Bulan
+          </option>
+
+          <option value="1">Januari</option>
+          <option value="2">Februari</option>
+          <option value="3">Maret</option>
+          <option value="4">April</option>
+          <option value="5">Mei</option>
+          <option value="6">Juni</option>
+          <option value="7">Juli</option>
+          <option value="8">Agustus</option>
+          <option value="9">September</option>
+          <option value="10">Oktober</option>
+          <option value="11">November</option>
+          <option value="12">Desember</option>
+
+        </select>
+
+        <select id="filterTahun" onchange="filterAbsensi()">
+
+          <option value="">
+            Semua Tahun
+          </option>
+
+        </select>
+
+      </div>
+
+      <div class="list" id="listAbsensi"></div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+
+const URL =
+"https://script.google.com/macros/s/AKfycbzdiABCZIRA7mWd6zx1vSFmnFEK6vm4polW3-hzHlilfeagTnN8V7yf9UO-BdCOKDUb/exec";
+
+const role =
+localStorage.getItem("role");
+
+let allData = [];
+
+
+// =========================
+// SIDEBAR
+// =========================
+
+function toggleSidebar(){
+
+  document
+  .getElementById("sidebar")
+  .classList.toggle("active");
+
+}
+
+
+// =========================
+// ROLE
+// =========================
+
+if(role === "owner"){
+
+  document
+  .getElementById("judul")
+  .innerText = "DAFTAR ABSENSI";
+
+  document
+  .getElementById("ownerBox")
+  .style.display = "block";
+
+  generateTahun();
+
+  loadAbsensi();
+
+}else{
+
+  document
+  .getElementById("judul")
+  .innerText = "ABSENSI KARYAWAN";
+
+  document
+  .getElementById("karyawanBox")
+  .style.display = "block";
+
+}
+
+
+// =========================
+// GENERATE TAHUN
+// =========================
+
+function generateTahun(){
+
+  const tahunSelect =
+  document.getElementById("filterTahun");
+
+  for(let i = 2030; i >= 2025; i--){
+
+    tahunSelect.innerHTML += `
+      <option value="${i}">
+        ${i}
+      </option>
+    `;
+
+  }
+
+}
+
+
+// =========================
+// ABSEN
+// =========================
+
+async function absenMasuk(){
+
+  const nama =
+  localStorage.getItem("username");
+
+  if(!nama){
+
+    alert("Login dulu");
+
+    return;
+
+  }
+
+  try{
+
+    const response =
+    await fetch(
+      `${URL}?action=absen&nama=${encodeURIComponent(nama)}`
+    );
+
+    const result =
+    await response.text();
+
+    document
+    .getElementById("infoAbsen")
+    .innerText = result;
+
+  }catch(error){
+
+    document
+    .getElementById("infoAbsen")
+    .innerText = "Server error";
+
+  }
+
+}
+
+
+// =========================
+// LOAD ABSENSI
+// =========================
+
+async function loadAbsensi(){
+
+  try{
+
+    const response =
+    await fetch(
+      `${URL}?action=getAbsensi`
+    );
+
+    const data =
+    await response.json();
+
+    allData = data;
+
+    renderAbsensi(allData);
+
+  }catch(error){
+
+    document
+    .getElementById("listAbsensi")
+    .innerHTML =
+    "<div class='empty'>Gagal load data</div>";
+
+  }
+
+}
+
+
+// =========================
+// FILTER
+// =========================
+
+function filterAbsensi(){
+
+  const bulan =
+  document.getElementById("filterBulan").value;
+
+  const tahun =
+  document.getElementById("filterTahun").value;
+
+  const filtered =
+  allData.filter(item => {
+
+    const date =
+    new Date(item.tanggal);
+
+    const itemBulan =
+    date.getMonth() + 1;
+
+    const itemTahun =
+    date.getFullYear();
+
+    const cocokBulan =
+    bulan == "" || itemBulan == bulan;
+
+    const cocokTahun =
+    tahun == "" || itemTahun == tahun;
+
+    return cocokBulan && cocokTahun;
+
+  });
+
+  renderAbsensi(filtered);
+
+}
+
+
+// =========================
+// RENDER ABSENSI
+// =========================
+
+function renderAbsensi(data){
+
+  let html = "";
+
+  if(data.length === 0){
+
+    html = `
+      <div class="empty">
+        Data tidak ditemukan
+      </div>
+    `;
+
+  }else{
+
+    data.slice().reverse().forEach(item => {
+
+      html += `
+
+        <div class="item">
+
+          <div class="nama">
+            ${item.nama}
+          </div>
+
+          <div class="detail">
+            📅 ${formatTanggal(item.tanggal)}
+          </div>
+
+          <div class="detail">
+            🕒 ${formatJam(item.jam)}
+          </div>
+
+        </div>
+
+      `;
+
+    });
+
+  }
+
+  document
+  .getElementById("listAbsensi")
+  .innerHTML = html;
+
+}
+
+
+// =========================
+// FORMAT TANGGAL
+// =========================
+
+function formatTanggal(tanggal){
+
+  const date =
+  new Date(tanggal);
+
+  return date.toLocaleDateString(
+    "id-ID",
+    {
+      day:"numeric",
+      month:"long",
+      year:"numeric"
+    }
+  );
+
+}
+
+
+// =========================
+// FORMAT JAM
+// =========================
+
+function formatJam(jam){
+
+  const date =
+  new Date(jam);
+
+  return date.toLocaleTimeString(
+    "id-ID",
+    {
+      hour:"2-digit",
+      minute:"2-digit"
+    }
+  );
+
+}
+
+</script>
+
+</body>
+</html>
