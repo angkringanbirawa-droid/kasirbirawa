@@ -302,10 +302,10 @@
       Pengaturan Printer
     </a>
 
-    <a href="#" onclick="logout()">
-      <span class="icon">🚪</span>
-      Logout
-    </a>
+   <a href="javascript:void(0)" onclick="logout()">
+  <span class="icon">🚪</span>
+  Logout
+</a>
 
   </div>
 
@@ -479,18 +479,15 @@ if (localStorage.getItem("loggedIn") !== "true") {
 
     // LOGOUT
 
-    function logout(){
+   function logout(){
 
-      const confirmLogout =
-      confirm("Yakin mau logout?");
+  localStorage.removeItem("loggedIn");
+  localStorage.removeItem("role");
+  localStorage.removeItem("username");
 
-      if(confirmLogout){
+  window.location.replace("login.html");
 
-        localStorage.clear();
-
-        window.location.href = "login.html";
-
-      }
+}
 
     }
 const HISTORY_URL =
