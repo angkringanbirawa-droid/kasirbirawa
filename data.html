@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>BirawaPOS</title>
+  <title>Dashboard - BirawaPOS</title>
 
   <style>
     *{
@@ -16,14 +16,18 @@
     body{
       background:#111;
       color:white;
-      /* PERBAIKAN: Padding atas dinamis mengikuti tinggi status bar HP */
-      padding-top: calc(10px + env(safe-area-inset-top, 24px));
+      padding-top: calc(60px + env(safe-area-inset-top, 24px));
     }
 
     /* HEADER */
     .header{
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
       background:#1b1b1b;
-      padding:18px;
+      padding: calc(15px + env(safe-area-inset-top, 24px)) 20px 15px 20px;
       display:flex;
       align-items:center;
       border-bottom:1px solid #2a2a2a;
@@ -36,9 +40,10 @@
 
     .title{
       color:#facc15;
-      font-size:22px;
+      font-size:20px;
       font-weight:bold;
       margin-left:15px;
+      letter-spacing: 0.5px;
     }
 
     /* SIDEBAR */
@@ -50,10 +55,9 @@
       top:0;
       left:-270px;
       transition:0.3s;
-      z-index:999;
+      z-index:9999;
       overflow-y:auto;
-      /* PERBAIKAN: Beri padding top aman di dalam sidebar */
-      padding-top: env(safe-area-inset-top, 24px);
+      padding-top: calc(20px + env(safe-area-inset-top, 24px));
     }
 
     .sidebar.active{
@@ -62,14 +66,14 @@
 
     /* PROFILE */
     .profile-box{
-      padding:30px 20px;
+      padding:25px 20px;
       text-align:center;
       border-bottom:1px solid #2c2c2c;
     }
 
     .profile-img{
-      width:85px;
-      height:85px;
+      width:80px;
+      height:80px;
       border-radius:50%;
       border:3px solid #facc15;
       background:white;
@@ -77,15 +81,19 @@
     }
 
     .profile-name{
-      font-size:18px;
+      font-size:17px;
       font-weight:bold;
       color:white;
     }
 
     .profile-role{
-      font-size:13px;
-      color:#999;
-      margin-top:5px;
+      font-size:12px;
+      color:#facc15;
+      background: rgba(250, 204, 21, 0.1);
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-top:6px;
     }
 
     /* SIDEBAR MENU */
@@ -93,11 +101,12 @@
       display:flex;
       align-items:center;
       gap:14px;
-      padding:17px 20px;
+      padding:16px 20px;
       color:white;
       text-decoration:none;
       border-bottom:1px solid #2a2a2a;
       transition:0.2s;
+      font-size: 15px;
     }
 
     .sidebar a:hover{
@@ -105,7 +114,7 @@
     }
 
     .icon{
-      font-size:21px;
+      font-size:20px;
     }
 
     /* OVERLAY */
@@ -113,7 +122,7 @@
       position:fixed;
       width:100%;
       height:100vh;
-      background:rgba(0,0,0,0.5);
+      background:rgba(0,0,0,0.6);
       top:0;
       left:0;
       display:none;
@@ -126,7 +135,7 @@
 
     /* CONTENT */
     .content{
-      padding:20px;
+      padding:16px;
     }
 
     /* QUICK MENU */
@@ -134,19 +143,19 @@
       display:grid;
       grid-template-columns:repeat(3,1fr);
       gap:10px;
-      margin-bottom:25px;
+      margin-bottom:20px;
     }
 
     .quick-btn{
-      background:#1f1f1f;
-      padding:16px 8px;
+      background:#1e1e1e;
+      padding:14px 8px;
       border-radius:16px;
       text-align:center;
       font-size:12px;
-      border:1px solid #2c2c2c;
+      border:1px solid #2a2a2a;
       cursor:pointer;
       transition:0.2s;
-      min-height:100px;
+      min-height:90px;
       display:flex;
       flex-direction:column;
       justify-content:center;
@@ -154,65 +163,86 @@
     }
 
     .quick-btn:hover{
-      transform:translateY(-3px);
-      background:#292929;
+      transform:translateY(-2px);
+      background:#262626;
+      border-color: #facc15;
     }
 
     .quick-icon{
-      font-size:24px;
-      margin-bottom:8px;
+      font-size:22px;
+      margin-bottom:6px;
     }
 
-    /* CARD */
+    /* CARD STYLING PERBAIKAN TOTAL */
     .card{
-      background:#1d1d1d;
+      background:#1e1e1e;
       border-radius:18px;
-      padding:20px;
-      margin-bottom:18px;
+      padding:16px 18px;
+      margin-bottom:12px;
       border:1px solid #2a2a2a;
     }
 
+    .card.full-width {
+      background: linear-gradient(135deg, #1e1b4b 0%, #111 100%);
+      border: 1px solid #312e81;
+      padding: 20px;
+      text-align: center;
+    }
+
     .card-title{
-      font-size:14px;
-      color:#999;
-      margin-bottom:12px;
+      font-size:11px;
+      color:#aaa;
+      margin-bottom:6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
     }
 
     .card-value{
-      font-size:30px;
+      font-size:24px;
       font-weight:bold;
-      color:#facc15;
     }
+
+    .card-value.laba {
+      color: #facc15;
+      font-size: 30px;
+    }
+    
+    .card-value.masuk { color: #00e676; }
+    .card-value.keluar { color: #ff5252; }
 
     .small-link{
-      margin-top:12px;
+      margin-top:10px;
       display:inline-block;
-      color:#aaa;
-      font-size:13px;
+      color:#facc15;
+      font-size:12px;
       cursor:pointer;
+      text-decoration: none;
+    }
+    
+    .small-link:hover {
+      text-decoration: underline;
     }
 
-    /* GRID */
+    /* GRID COLS */
     .grid{
       display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:15px;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
     }
 
-    /* PERBAIKAN TOTAL: FOOTER CENTER & PAS DIBAWAH */
+    /* FOOTER */
     footer{
       width:100%;
-      display:block;
-      clear:both;
       text-align:center;
-      /* Warna disesuaikan abu-abu redup elegan agar kontras tulisan terbaca jelas */
-      color:#666666;
-      font-size:12px;
+      color:#555;
+      font-size:11px;
       letter-spacing: 0.5px;
       border-top:1px solid #222;
-      padding: 40px 10px calc(20px + env(safe-area-inset-bottom, 0px)) 10px;
-      margin-top: 20px;
-      box-sizing:border-box;
+      padding: 35px 10px calc(15px + env(safe-area-inset-bottom, 0px)) 10px;
+      margin-top: 25px;
     }
   </style>
 </head>
@@ -220,15 +250,14 @@
 
   <div class="header">
     <div class="menu-btn" onclick="openSidebar()">☰</div>
-    <div class="title">BIRAWA KASIR</div>
-    <div></div>
+    <div class="title">BIRAWA POS</div>
   </div>
 
   <div class="sidebar" id="sidebar">
     <div class="profile-box">
       <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="profile-img">
-      <div class="profile-name" id="profileName">INI GUE</div>
-      <div class="profile-role">Karyawan Teladan</div>
+      <div class="profile-name" id="profileName">Karyawan</div>
+      <div class="profile-role" id="profileRole">Karyawan Teladan</div>
     </div>
 
     <a href="absensi.html">
@@ -261,34 +290,34 @@
     <div class="quick-menu">
       <div class="quick-btn" onclick="window.location.href='transaksi.html'">
         <div class="quick-icon">💰</div>
-        <span>Transaksi</span>
+        <span style="font-weight:bold;">Transaksi</span>
       </div>
       <div class="quick-btn" onclick="window.location.href='pengeluaran.html'">
         <div class="quick-icon">📊</div>
-        <span>Pengeluaran</span>
+        <span style="font-weight:bold;">Pengeluaran</span>
       </div>
       <div class="quick-btn" onclick="window.location.href='histori.html'">
         <div class="quick-icon">🧾</div>
-        <span>Histori</span>
+        <span style="font-weight:bold;">Histori</span>
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-title">Pemasukan</div>
-      <div class="card-value" id="omsetHariIni">Rp 0</div>
-      <div class="small-link" onclick="window.location.href='histori.html'">Lihat Selengkapnya</div>
+    <div class="card full-width">
+      <div class="card-title" style="justify-content: center;">💳 Omset Bersih Hari Ini</div>
+      <div class="card-value laba" id="labaHariIni">Rp 0</div>
     </div>
 
     <div class="grid">
       <div class="card">
-        <div class="card-title">Pengeluaran</div>
-        <div class="card-value" id="pengeluaranHariIni">Rp 0</div>
-        <div class="small-link" onclick="window.location.href='pengeluaran.html'">Selengkapnya</div>
+        <div class="card-title">🟢 Total Masuk</div>
+        <div class="card-value masuk" id="omsetHariIni">Rp 0</div>
+        <div class="small-link" onclick="window.location.href='histori.html'">Detail ➔</div>
       </div>
 
       <div class="card">
-        <div class="card-title">OMSET HARI INI</div>
-        <div class="card-value" id="labaHariIni">Rp 0</div>
+        <div class="card-title">🔴 Total Keluar</div>
+        <div class="card-value keluar" id="pengeluaranHariIni">Rp 0</div>
+        <div class="small-link" onclick="window.location.href='pengeluaran.html'">Detail ➔</div>
       </div>
     </div>
 
@@ -303,7 +332,6 @@
       window.location.href = "login.html";
     }
 
-    // SIDEBAR
     function openSidebar(){
       document.getElementById("sidebar").classList.add("active");
       document.getElementById("overlay").classList.add("active");
@@ -314,17 +342,23 @@
       document.getElementById("overlay").classList.remove("active");
     }
 
-    // USER LOGIN
     const username = localStorage.getItem("username");
     if(username){
       document.getElementById("profileName").innerText = username;
     }
 
-    // LOGOUT
+    const role = localStorage.getItem("role");
+    if(role){
+      document.getElementById("profileRole").innerText = role.toUpperCase();
+      if(role === "karyawan"){
+        document.querySelectorAll(".menu-owner").forEach(menu=>{
+          menu.style.display = "none";
+        });
+      }
+    }
+
     function logout(){
-      localStorage.removeItem("loggedIn");
-      localStorage.removeItem("role");
-      localStorage.removeItem("username");
+      localStorage.clear();
       window.location.replace("login.html");
     }
 
@@ -392,13 +426,6 @@
 
     loadOmsetHariIni();
     loadPengeluaranHariIni();
-
-    const role = localStorage.getItem("role");
-    if(role === "karyawan"){
-      document.querySelectorAll(".menu-owner").forEach(menu=>{
-        menu.style.display = "none";
-      });
-    }
   </script>
 </body>
 </html>
