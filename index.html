@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Angkringan Birawa</title>
 
 <style>
@@ -76,7 +76,6 @@ h1{
   margin-bottom:10px;
   font-size:34px;
   text-shadow:0 0 25px rgba(250,204,21,0.4);
-
   animation:slideDown 1s ease forwards;
   opacity:0;
 }
@@ -90,7 +89,6 @@ h1{
 p{
   color:#aaa;
   margin-bottom:30px;
-
   animation:fadeText 1.3s ease forwards;
   opacity:0;
 }
@@ -111,12 +109,10 @@ button{
   color:#111;
   font-weight:bold;
   cursor:pointer;
-
   opacity:0;
   transform:translateY(20px);
   animation:btnIn 1.2s ease forwards;
   animation-delay:0.7s;
-
   transition:0.3s;
 }
 
@@ -146,48 +142,46 @@ button:hover{
   transition:0.5s ease;
 }
 
-/* ========================= */
-/* FOOTER ANIMASI KEREN */
-/* ========================= */
-
+/* ======================================= */
+/* PERBAIKAN: FOOTER AMAN DARI NAVIGATION BAR */
+/* ======================================= */
 footer.footer{
   position:fixed;
-  bottom:15px;
+  /* PERBAIKAN: Ditambahkan kalkulasi env safe-area agar otomatis naik di atas garis navigasi HP */
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
   left:50%;
-  transform:translateX(-50%);
-
   display:flex;
   align-items:center;
   gap:8px;
-
   padding:10px 16px;
   border-radius:999px;
-
   background:rgba(20,20,20,0.6);
   backdrop-filter:blur(10px);
-
   color:#aaa;
   font-size:12px;
-
   border:1px solid rgba(250,204,21,0.15);
-
-  animation:footerIn 1.2s ease forwards;
+  /* Gunakan properti awal transisi agar mulus */
+  transform: translateX(-50%);
+  transition: transform 0.3s ease, border-color 0.3s ease;
+  animation: footerIn 1.2s ease forwards;
   opacity:0;
+  z-index: 10;
 }
 
-/* masuk animasi */
+/* Masuk animasi */
 @keyframes footerIn{
   from{
     opacity:0;
-    transform:translateX(-50%) translateY(20px);
+    /* Tetap jaga posisi tengah X saat translasi Y berjalan */
+    transform: translateX(-50%) translateY(30px);
   }
   to{
     opacity:1;
-    transform:translateX(-50%) translateY(0);
+    transform: translateX(-50%) translateY(0);
   }
 }
 
-/* dot hidup */
+/* Dot hidup */
 footer.footer .dot{
   color:#facc15;
   animation:pulse 1.5s infinite;
@@ -198,21 +192,19 @@ footer.footer .dot{
   50%{opacity:1; transform:scale(1.3);}
 }
 
-/* hover effect */
+/* Hover effect */
 footer.footer:hover{
   border-color:rgba(250,204,21,0.4);
-  transform:translateX(-50%) scale(1.05);
-  transition:0.3s;
+  /* PERBAIKAN: Sumbu X dikunci di -50% agar waktu di-hover kotak footer tidak melompat acak ke kanan */
+  transform: translateX(-50%) scale(1.05);
 }
 
 </style>
-
 </head>
 <body>
 
 <div class="bg-glow"></div>
 
-<!-- PARTICLES -->
 <script>
 for(let i=0;i<18;i++){
   let p = document.createElement("div");
@@ -224,17 +216,11 @@ for(let i=0;i<18;i++){
 </script>
 
 <div class="box">
-
   <h1>Selamat Datang Di</h1>
   <p>Angkringan Birawa</p>
-
-  <button onclick="goLogin()">
-    GASS DAGANG
-  </button>
-
+  <button onclick="goLogin()">GASS DAGANG</button>
 </div>
 
-<!-- FOOTER -->
 <footer class="footer">
   <span>© 2026 Birawa</span>
   <span class="dot">•</span>
@@ -242,15 +228,12 @@ for(let i=0;i<18;i++){
 </footer>
 
 <script>
-
 function goLogin(){
   document.body.classList.add("fade-out");
-
   setTimeout(()=>{
     window.location.href = "login.html";
   },500);
 }
-
 </script>
 
 </body>
