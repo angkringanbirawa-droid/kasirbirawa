@@ -151,23 +151,44 @@ button:hover{
 /* ======================================= */
 /* PERBAIKAN: LAYOUT LOADING DIKUNCI DI ATAS */
 /* ======================================= */
-#loading{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.85); /* Sedikit diturunkan opasitas hitamnya agar terkesan smooth */
-  display:none; /* Diatur default none, akan diubah murni lewat JS flex */
-  justify-content:center;
-  align-items:center;
-  z-index:99999; /* Dinaikkan ke tingkat maksimal agar tidak tenggelam di bawah box */
+/* ======================================= */
+/* KUNCI LOADING MUTLAK DI TENGAH LAYAR HP */
+/* ======================================= */
+#loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;  /* Memaksa lebar penuh seukuran layar HP */
+  height: 100vh; /* Memaksa tinggi penuh seukuran layar HP */
+  background: rgba(11, 11, 11, 0.9); /* Background hitam pekat agar fokus */
+  
+  /* Reset flexbox agar murni center */
+  display: none; 
+  justify-content: center;
+  align-items: center;
+  
+  /* Naikkan ke layer paling atas, lewati semua animasi background */
+  z-index: 999999 !important; 
 }
 
-.spinner{
-  width:60px;
-  height:60px;
-  border:6px solid #222;
-  border-top:6px solid #facc15;
-  border-radius:50%;
-  animation:spin 1s linear infinite;
+.spinner {
+  width: 55px;
+  height: 55px;
+  border: 5px solid #222;
+  border-top: 5px solid #facc15;
+  border-radius: 50%;
+  
+  /* Kunci posisi spinner tepat di tengah container */
+  margin: auto; 
+  
+  /* Pastikan tidak mewarisi animasi atau pergeseran dari box login */
+  transform: translate(0, 0); 
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 @keyframes spin{
