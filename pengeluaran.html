@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Histori Transaksi - BirawaPOS</title>
+<title>Pengeluaran - BirawaPOS</title>
 
 <style>
 
@@ -17,145 +17,22 @@
 body{
   background:#111;
   color:white;
+  /* PERBAIKAN: Padding atas dinamis mengikuti tinggi header aman status bar */
   padding: calc(65px + env(safe-area-inset-top, 24px)) 16px 20px 16px;
-}
-
-.container{
-  max-width:700px;
-  margin:auto;
-}
-
-.card{
-  background:#1d1d1d;
-  border:1px solid #2a2a2a;
-  border-radius:18px;
-  padding:16px;
-}
-
-h2{
-  text-align:center;
-  color:#facc15;
-  margin-bottom:20px;
-  font-size:20px;
-  font-weight:bold;
-  letter-spacing: 0.5px;
-}
-
-/* FILTER GAYA BARU (3 KOLOM KARENA ADA HARI) */
-.filter{
-  display:flex;
-  gap:8px;
-  margin-bottom:20px;
-}
-
-select{
-  flex:1;
-  padding:12px 8px;
-  border:none;
-  border-radius:12px;
-  background:#2b2b2b;
-  color:white;
-  font-size:13px;
-  outline:none;
-}
-
-.financial-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.fin-box {
-  background: #222;
-  border: 1px solid #2a2a2a;
-  padding: 12px 14px;
-  border-radius: 14px;
-}
-
-.fin-box.full-width {
-  grid-column: span 2;
-  background: linear-gradient(135deg, #1e1b4b 0%, #111 100%);
-  border: 1px solid #312e81;
-  text-align: center;
-  padding: 16px;
-}
-
-.fin-label {
-  font-size: 11px;
-  color: #aaa;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 4px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.fin-value {
-  font-size: 16px;
-  font-weight: bold;
-}
-
-.fin-value.masuk { color: #00e676; }
-.fin-value.keluar { color: #ff5252; }
-.fin-value.saldo { 
-  color: #facc15; 
-  font-size: 24px;
-}
-
-/* LIST ITEM */
-.item{
-  background:#222;
-  border-radius:14px;
-  padding:15px;
-  margin-bottom:12px;
-  border: 1px solid #2a2a2a;
-}
-
-.top{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:8px;
-}
-
-.id{
-  color:#facc15;
-  font-weight:bold;
-  font-size:14px;
-}
-
-.total{
-  color:#00e676;
-  font-weight:bold;
-}
-
-.detail{
-  color:#ccc;
-  font-size:13px;
-  margin-top:4px;
-}
-
-.empty{
-  text-align:center;
-  color:#888;
-  margin-top:30px;
-  font-size:14px;
 }
 
 /* HEADER */
 .header{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  z-index:1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
   background:#1b1b1b;
   padding: calc(15px + env(safe-area-inset-top, 24px)) 20px 15px 20px;
   display:flex;
-  justify-content:space-between;
   align-items:center;
+  gap:15px;
   border-bottom:1px solid #2a2a2a;
 }
 
@@ -165,9 +42,10 @@ select{
 }
 
 .title{
-  color:#facc15;
+  font-size:20px;
   font-weight:bold;
-  font-size:18px;
+  color:#facc15;
+  letter-spacing: 0.5px;
 }
 
 /* SIDEBAR */
@@ -189,21 +67,25 @@ select{
 
 .sidebar a{
   display:block;
+  padding:18px;
   color:white;
   text-decoration:none;
-  padding:16px 20px;
-  border-bottom:1px solid #2b2b2b;
+  border-bottom:1px solid #2a2a2a;
+  font-size: 15px;
 }
 
 .sidebar a:hover{
-  background:#2b2b2b;
+  background:#2a2a2a;
 }
 
 .overlay{
   position:fixed;
-  inset:0;
+  width:100%;
+  height:100vh;
   background:rgba(0,0,0,.6);
   display:none;
+  top:0;
+  left:0;
   z-index:998;
 }
 
@@ -211,46 +93,98 @@ select{
   display:block;
 }
 
-.profile-box{
-  text-align:center;
-  padding:25px;
-  border-bottom:1px solid #333;
+/* CONTENT CONTAINER */
+.container{
+  max-width: 600px;
+  margin: auto;
+  padding-top: 10px;
 }
 
-.profile-img{
-  width:80px;
-  height:80px;
-  border-radius:50%;
-  border:3px solid #facc15;
+.card{
+  background:#1e1e1e;
+  border-radius:18px;
+  padding:20px;
+  margin-bottom:25px;
+  border:1px solid #2a2a2a;
 }
 
-.profile-name{
-  margin-top:10px;
+.input{
+  width:100%;
+  padding:14px;
+  border:1px solid transparent;
+  border-radius:12px;
+  background:#2a2a2a;
+  color:white;
+  margin-bottom:14px;
+  outline:none;
+  font-size:14px;
+  transition: 0.2s;
+}
+
+.input:focus{
+  border-color: #facc15;
+}
+
+.btn{
+  width:100%;
+  padding:15px;
+  border:none;
+  border-radius:14px;
+  background:#facc15;
+  color:#111;
   font-weight:bold;
+  font-size:15px;
+  cursor:pointer;
+  transition: 0.2s;
 }
 
-.item.masuk{
-  border-left:5px solid #00e676;
+.btn:active{
+  transform: scale(0.98);
 }
 
-.item.keluar{
-  border-left:5px solid #ff5252;
-}
-
-.nominal-masuk{
-  color:#00e676;
+.section-title{
+  font-size:15px;
   font-weight:bold;
+  color:#aaa;
+  margin-bottom:15px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.nominal-keluar{
+/* LIST ITEM EXPENSE ELEGAN */
+.item{
+  background:#1e1e1e;
+  padding:15px 18px;
+  border-radius:14px;
+  margin-bottom:12px;
+  border:1px solid #2a2a2a;
+  border-left: 5px solid #ef4444; /* Penanda Visual Merah Pengeluaran */
+}
+
+.item-keperluan{
+  font-size:15px;
+  font-weight:bold;
+  color: #fff;
+}
+
+.item-nominal{
   color:#ff5252;
   font-weight:bold;
+  font-size: 16px;
+  margin-top:4px;
 }
 
-.tipe{
+.item-tanggal{
+  color:#888;
   font-size:12px;
-  margin-top:5px;
-  color:#aaa;
+  margin-top:6px;
+}
+
+.empty{
+  text-align:center;
+  color:#666;
+  margin-top:30px;
+  font-size: 14px;
 }
 
 </style>
@@ -259,58 +193,54 @@ select{
 
 <div class="header">
   <div class="menu-btn" onclick="openSidebar()">☰</div>
-  <div class="title">BIRAWA POS</div>
-  <div></div>
+  <div class="title">PENGELUARAN</div>
 </div>
 
 <div class="sidebar" id="sidebar">
-  <div class="profile-box">
-    <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="profile-img">
-    <div class="profile-name" id="profileName">User</div>
-  </div>
   <a href="data.html">🏠 Dashboard</a>
-  <a href="absensi.html">🕒 Absensi</a>
   <a href="transaksi.html">💰 Transaksi</a>
   <a href="histori.html">🧾 Histori</a>
-  <a href="login.html" onclick="logout()">🚪 Logout</a>
+  <a href="pengeluaran.html">📉 Pengeluaran</a>
+  <a href="input.html">🍜 Kelola Produk</a>
 </div>
 
 <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
 <div class="container">
+
   <div class="card">
-    <h2>HISTORI TRANSAKSI</h2>
-    
-    <div class="filter">
-      <select id="tanggal" onchange="filterData()">
-        <option value="">Hari / Tgl</option>
-      </select>
+    <input
+      type="number"
+      id="jumlah"
+      class="input"
+      placeholder="Jumlah Pengeluaran (Rp)"
+    >
 
-      <select id="bulan" onchange="updateTanggal(); filterData();">
-        <option value="">Bulan</option>
-        <option value="1">Januari</option>
-        <option value="2">Februari</option>
-        <option value="3">Maret</option>
-        <option value="4">April</option>
-        <option value="5">Mei</option>
-        <option value="6">Juni</option>
-        <option value="7">Juli</option>
-        <option value="8">Agustus</option>
-        <option value="9">September</option>
-        <option value="10">Oktober</option>
-        <option value="11">November</option>
-        <option value="12">Desember</option>
-      </select>
+    <input
+      type="text"
+      id="keperluan"
+      class="input"
+      placeholder="Keperluan / Keterangan"
+    >
 
-      <select id="tahun" onchange="updateTanggal(); filterData();">
-        <option value="">Tahun</option>
-      </select>
-    </div>
-
-    <div class="financial-grid" id="totalOmset"></div>
-
-    <div id="list"></div>
+    <button
+      class="btn"
+      onclick="simpanPengeluaran()"
+    >
+      SIMPAN PENGELUARAN
+    </button>
   </div>
+
+  <div class="section-title">
+    Histori Pengeluaran Hari Ini
+  </div>
+
+  <div id="listPengeluaran">
+    <div class="empty">
+      Loading data...
+    </div>
+  </div>
+
 </div>
 
 <script>
@@ -319,167 +249,67 @@ if (localStorage.getItem("loggedIn") !== "true") {
 }
 const URL = "https://script.google.com/macros/s/AKfycbxpzfOKXJkXqUJbz8b9WeJXJxti5CRSIslQVfVgXviPftSVap8mpqjfuTnZwuz-GOs/exec";
 
-let allData = [];
-
-// Taruh tahun dinamis
-for(let i=2030;i>=2025;i--){
-  document.getElementById("tahun").innerHTML += `
-    <option value="${i}">${i}</option>
-  `;
+function openSidebar(){
+  document.getElementById("sidebar").classList.add("active");
+  document.getElementById("overlay").classList.add("active");
 }
 
-// Menghitung & generate jumlah hari secara otomatis sesuai Bulan + Tahun
-function updateTanggal() {
-  const tglSelect = document.getElementById("tanggal");
-  const bulan = document.getElementById("bulan").value;
-  const tahun = document.getElementById("tahun").value;
-  
-  // Simpan nilai tanggal yang sedang dipilih sebelum di-reset
-  const tglTerpilih = tglSelect.value;
-  
-  tglSelect.innerHTML = '<option value="">Hari / Tgl</option>';
-  
-  // Jika bulan & tahun belum dipilih, kita tampilkan standar 31 hari dulu
-  let jumlahHari = 31;
-  
-  if (bulan !== "" && tahun !== "") {
-    // Trik JS dapat total hari akhir dalam sebulan
-    jumlahHari = new Date(tahun, bulan, 0).getDate();
-  }
-  
-  for (let i = 1; i <= jumlahHari; i++) {
-    tglSelect.innerHTML += `<option value="${i}">${i}</option>`;
-  }
-  
-  // Kembalikan pilihan user jika tanggal tersebut masih ada di bulan baru
-  if (tglTerpilih <= jumlahHari) {
-    tglSelect.value = tglTerpilih;
-  }
+function closeSidebar(){
+  document.getElementById("sidebar").classList.remove("active");
+  document.getElementById("overlay").classList.remove("active");
 }
 
-// Jalankan generator tanggal default saat pertama dimuat
-updateTanggal();
+async function simpanPengeluaran(){
+  const jumlah = document.getElementById("jumlah").value;
+  const keperluan = document.getElementById("keperluan").value;
 
-async function loadHistory(){
-  try{
-    const [trxRes,pengRes] = await Promise.all([
-      fetch(`${URL}?action=getHistory`),
-      fetch(`${URL}?action=getPengeluaran`)
-    ]);
+  if(!jumlah || !keperluan){
+    alert("Lengkapi data pengeluaran!");
+    return;
+  }
 
-    const transaksi = await trxRes.json();
-    const pengeluaran = await pengRes.json();
-    const gabungan = [];
+  try {
+    const res = await fetch(`${URL}?action=addPengeluaran&jumlah=${jumlah}&keperluan=${encodeURIComponent(keperluan)}`);
+    const result = await res.text();
+    
+    alert(result);
 
-    // TRANSAKSI
-    transaksi.forEach(item=>{
-      gabungan.push({
-        tipe:"masuk",
-        id:item.id,
-        tanggal:item.tanggal,
-        metode:item.metode,
-        nominal:Number(item.total)
-      });
-    });
+    document.getElementById("jumlah").value = "";
+    document.getElementById("keperluan").value = "";
 
-    // PENGELUARAN
-    pengeluaran.forEach(item=>{
-      gabungan.push({
-        tipe:"keluar",
-        tanggal:item.tanggal,
-        keterangan:item.keterangan || "Pengeluaran",
-        nominal:Number(item.jumlah)
-      });
-    });
-
-    gabungan.sort((a,b)=> new Date(b.tanggal) - new Date(a.tanggal));
-    allData = gabungan;
-    renderData(gabungan);
-
-  }catch(err){
-    document.getElementById("list").innerHTML = "<div class='empty'>Gagal memuat data</div>";
+    loadPengeluaran();
+  } catch (err) {
     console.log(err);
+    alert("Gagal terhubung ke server.");
   }
 }
 
-// UPDATE: FUNGSI FILTER MENDUKUNG TANGGAL/HARI DINAMIS
-function filterData(){
-  const tanggal = document.getElementById("tanggal").value;
-  const bulan = document.getElementById("bulan").value;
-  const tahun = document.getElementById("tahun").value;
+async function loadPengeluaran(){
+  try {
+    const res = await fetch(`${URL}?action=getPengeluaran`);
+    const data = await res.json();
 
-  const filtered = allData.filter(item=>{
-    const date = new Date(item.tanggal);
-    const h = date.getDate();
-    const b = date.getMonth()+1;
-    const t = date.getFullYear();
+    let html = "";
 
-    const cocokHari = tanggal=="" || h==tanggal;
-    const cocokBulan = bulan=="" || b==bulan;
-    const cocokTahun = tahun=="" || t==tahun;
-
-    return cocokHari && cocokBulan && cocokTahun;
-  });
-
-  renderData(filtered);
-}
-
-function renderData(data){
-  let html = "";
-  let totalMasuk = 0;
-  let totalKeluar = 0;
-
-  if(data.length === 0){
-    html = "<div class='empty'>Belum ada data transaksi</div>";
-  }else{
-    data.forEach(item=>{
-      if(item.tipe === "masuk"){
-        totalMasuk += item.nominal;
-        html += `
-          <div class="item masuk" onclick="toggleDetail('${item.id}')" style="cursor:pointer">
-            <div class="top">
-              <div class="id">${item.id}</div>
-              <div class="nominal-masuk">+ Rp ${formatRupiah(item.nominal)}</div>
-            </div>
-            <div class="detail">📅 ${formatTanggal(item.tanggal)}</div>
-            <div class="tipe">💰 Transaksi (${item.metode})</div>
-            <div id="detail-${item.id}" style="display:none; margin-top:10px; padding-top:10px; border-top:1px solid #444;"></div>
-          </div>
-        `;
-      }else{
-        totalKeluar += item.nominal;
-        html += `
-          <div class="item keluar">
-            <div class="top">
-              <div class="id">${item.keterangan}</div>
-              <div class="nominal-keluar">- Rp ${formatRupiah(item.nominal)}</div>
-            </div>
-            <div class="detail">📅 ${formatTanggal(item.tanggal)}</div>
-            <div class="tipe">📉 Pengeluaran</div>
-          </div>
-        `;
-      }
+    data.reverse().forEach(item=>{
+      html += `
+        <div class="item">
+          <div class="item-keperluan">${item.keperluan || item.keterangan || "Pengeluaran"}</div>
+          <div class="item-nominal">- Rp ${Number(item.jumlah).toLocaleString("id-ID")}</div>
+          <div class="item-tanggal">📅 ${formatTanggal(item.tanggal)}</div>
+        </div>
+      `;
     });
+
+    if(data.length === 0){
+      html = `<div class="empty">Belum ada catatan pengeluaran</div>`;
+    }
+
+    document.getElementById("listPengeluaran").innerHTML = html;
+  } catch(err) {
+    console.log(err);
+    document.getElementById("listPengeluaran").innerHTML = `<div class="empty">Gagal memuat histori</div>`;
   }
-
-  const laba = totalMasuk - totalKeluar;
-
-  document.getElementById("totalOmset").innerHTML = `
-    <div class="fin-box">
-      <div class="fin-label">🟢 Masuk</div>
-      <div class="fin-value masuk">Rp ${formatRupiah(totalMasuk)}</div>
-    </div>
-    <div class="fin-box">
-      <div class="fin-label">🔴 Keluar</div>
-      <div class="fin-value keluar">Rp ${formatRupiah(totalKeluar)}</div>
-    </div>
-    <div class="fin-box full-width">
-      <div class="fin-label" style="justify-content:center;">💳 Sisa Saldo Bersih</div>
-      <div class="fin-value saldo">Rp ${formatRupiah(laba)}</div>
-    </div>
-  `;
-
-  document.getElementById("list").innerHTML = html;
 }
 
 function formatTanggal(tanggal){
@@ -493,62 +323,7 @@ function formatTanggal(tanggal){
   });
 }
 
-function formatRupiah(angka){
-  return Number(angka).toLocaleString("id-ID");
-}
-
-function openSidebar(){
-  document.getElementById("sidebar").classList.add("active");
-  document.getElementById("overlay").classList.add("active");
-}
-
-function closeSidebar(){
-  document.getElementById("sidebar").classList.remove("active");
-  document.getElementById("overlay").classList.remove("active");
-}
-
-const username = localStorage.getItem("username");
-if(username){
-  document.getElementById("profileName").innerText = username;
-}
-
-function logout(){
-  localStorage.clear();
-  window.location.href = "login.html";
-}
-
-async function toggleDetail(id){
-  const box = document.getElementById("detail-" + id);
-  if(box.style.display === "block"){
-    box.style.display = "none";
-    return;
-  }
-  if(box.innerHTML.trim() !== ""){
-    box.style.display = "block";
-    return;
-  }
-
-  const res = await fetch(`${URL}?action=getDetail&id=${id}`);
-  const data = await res.json();
-  let html = "";
-
-  if(data.length === 0){
-    html = "<div class='detail'>Tidak ada detail produk</div>";
-  }else{
-    data.forEach(item=>{
-      html += `
-        <div class="detail" style="background:#2b2b2b; padding:8px 12px; margin-bottom:4px; border-radius:8px; font-size:13px;">
-          🍜 <b>${item.nama_produk}</b> (${item.qty}x) <span style="float:right; color:#facc15;">Rp ${formatRupiah(item.subtotal)}</span>
-        </div>
-      `;
-    });
-  }
-
-  box.innerHTML = html;
-  box.style.display = "block";
-}
-
-loadHistory();
+loadPengeluaran();
 </script>
 
 </body>
