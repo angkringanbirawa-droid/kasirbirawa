@@ -387,7 +387,7 @@ body{
   cursor:pointer;
 }
 
-/* FIXED LOADING FOR ANDROID WEBVIEW CHIP CONTAINER */
+/* SPINNER FIXED LAYAR KUNCI HP */
 #loading {
   position: fixed;
   top: 0;
@@ -482,7 +482,16 @@ body{
   </div>
 </div>
 
-<!-- ELEMENT LOADING GIF ANTI BUG ANDROID WEBVIEW -->
+<div class="modal" id="konfirmasiHapusModal">
+  <div class="modal-content" style="text-align: center;">
+    <div class="modal-title" id="judulKonfirmasi">Yakin mau hapus pesanan ini?</div>
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
+      <button class="struk-btn yes" id="btnYaHapus" style="flex: 1; margin: 0;">YA</button>
+      <button class="struk-btn no" onclick="tutupKonfirmasiHapus()" style="flex: 1; margin: 0;">TIDAK</button>
+    </div>
+  </div>
+</div>
+
 <div id="loading">
   <img src="https://i.gifer.com/ZZ5H.gif" style="width: 50px; height: 50px; filter: hue-rotate(10deg); vertical-align: middle;">
 </div>
@@ -496,21 +505,25 @@ if (localStorage.getItem("loggedIn") !== "true") {
 const PRODUCT_URL = "https://script.google.com/macros/s/AKfycbwN6qlNF9VBj7ysb79rVd_AkNSg2jYC22xYwGR6fxLNlur20cu1AYKtS8j0xQb4yNJX/exec";
 const TRANSACTION_URL = "https://script.google.com/macros/s/AKfycbxpzfOKXJkXqUJbz8b9WeJXJxti5CRSIslQVfVgXviPftSVap8mpqjfuTnZwuz-GOs/exec";
 
-// URL AKSI DATABASE BARU LU UNTUK PELANGGAN GANTUNG
+// URL GOOGLE APPS SCRIPT DATABASE PENDING LU
 const GANTUNG_URL = "https://script.google.com/macros/s/AKfycbwVm1aod-67Jt3xRuhXNsnmaYVWrEtGDtBcomZaAgMNGjs0ioRA-sB5PItkDheQkfU/exec";
 
 let produkData = [];
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-// Sekarang savedOrders murni kita jadikan array data lokal penampung setelah fetch Sheets
 let savedOrders = [];
 
-// Fungsi Pengendali Loading Layar
+// Variabel Penahan Pilihan Baris Untuk Modal Box
+let barisDipilih = null;
+let namaDipilih = "";
+
 function showLoading(){
   document.getElementById("loading").style.setProperty("display", "flex", "important");
 }
 function hideLoading(){
   document.getElementById("loading").style.setProperty("display", "none", "important");
+}
+function tutupKonfirmasiHapus() {
+  document.getElementById("konfirmasiHapusModal").style.display = "none";
 }
 
 function saveLocal(){
@@ -673,15 +686,14 @@ function selesaiTransaksi(){
 }
 
 /* ======================================================== */
-/* PERBAIKAN: MANAJEMEN DAFTAR BELUM BAYAR KE GOOGLE SHEETS  */
+/* MANAJEMEN PENDING ORDER GOOGLE SHEETS DENGAN MODAL ANTI LAG */
 /* ======================================================== */
 
-// 1. Ambil Data dari Google Sheets saat buka halaman/refresh
 async function loadDaftarGantungFromServer() {
   try {
     const res = await fetch(`${GANTUNG_URL}?action=getPelangganGantung&t=${Date.now()}`);
     const data = await res.json();
-    savedOrders = data; // Masukkan ke list lokal
+    savedOrders = data;
     updateOrderBadge();
   } catch(err) {
     console.log("Gagal sinkronisasi data gantung:", err);
@@ -696,7 +708,6 @@ function openSaveOrder(){
   document.getElementById("saveModal").style.display = "flex";
 }
 
-// 2. Fungsi Kirim/Simpan Pesanan Belum Bayar Ke Google Sheets
 async function simpanPesanan(){
   const nama = document.getElementById("namaPesanan").value;
   if(!nama){
@@ -704,7 +715,6 @@ async function simpanPesanan(){
     return;
   }
 
-  // Hitung detail ringkasan kolom Sheets (Nama, Order, Harga, Total_harga)
   let total_harga = 0;
   let orderDetails = [];
   let hargaDetails = [];
@@ -728,7 +738,6 @@ async function simpanPesanan(){
     hideLoading();
 
     if(text.trim() === "BERHASIL_SIMPAN") {
-      // Masukkan juga detail keranjang penuh ke localstorage cadangan biar data item tidak pecah waktu di-restore
       let backupData = JSON.parse(localStorage.getItem("backupItems")) || {};
       backupData[nama] = [...cart];
       localStorage.setItem("backupItems", JSON.stringify(backupData));
@@ -742,7 +751,7 @@ async function simpanPesanan(){
       document.getElementById("namaPesanan").value = "";
       
       alert("Pesanan berhasil dicatat di database!");
-      await loadDaftarGantungFromServer(); // Tarik data ulang
+      await loadDaftarGantungFromServer();
     } else {
       alert("Gagal menyimpan ke spreadsheet server");
     }
@@ -757,7 +766,6 @@ function updateOrderBadge(){
   document.getElementById("orderBadge").innerText = savedOrders.length;
 }
 
-/* PESANAN MODAL VIEW */
 function openPesanan(){
   document.getElementById("pesananModal").style.display = "flex";
   renderPesanan();
@@ -784,8 +792,8 @@ function renderPesanan(data = savedOrders){
         <div style="font-size:13px; color:#facc15; margin: 3px 0;">Menu: ${order.order}</div>
         <div class="order-total">Total : Rp ${Number(order.total_harga).toLocaleString("id-ID")}</div>
         <div style="display:flex; gap:10px; margin-top:15px;">
-          <button onclick="loadPesanan(${order.rowNumber}, '${escape(order.nama)}')" style="flex:1; padding:12px; border:none; border-radius:12px; background:#facc15; color:#111; font-weight:bold; cursor:pointer;">Bayar</button>
-          <button onclick="hapusPesanan(${order.rowNumber})" style="flex:1; padding:12px; border:none; border-radius:12px; background:#5a1d1d; color:white; font-weight:bold; cursor:pointer;">Hapus</button>
+          <button onclick="bukaKonfirmasiAmbil(${order.rowNumber}, '${escape(order.nama)}')" style="flex:1; padding:12px; border:none; border-radius:12px; background:#facc15; color:#111; font-weight:bold; cursor:pointer;">Bayar</button>
+          <button onclick="bukaKonfirmasiHapus(${order.rowNumber})" style="flex:1; padding:12px; border:none; border-radius:12px; background:#5a1d1d; color:white; font-weight:bold; cursor:pointer;">Hapus</button>
         </div>
       </div>
     `;
@@ -793,54 +801,34 @@ function renderPesanan(data = savedOrders){
   container.innerHTML = html;
 }
 
-// 3. Fungsi memanggil kembali pesanan gantung untuk dibayar lunas
-async function loadPesanan(rowNumber, escapedNama){
-  const namaReal = unescape(escapedNama);
-  showLoading();
-
-  try {
-    // Hapus barisnya dari Google Sheets terlebih dahulu karena statusnya ditarik kembali ke kasir
-    const res = await fetch(`${GANTUNG_URL}?action=hapusPelangganGantung&rowNumber=${rowNumber}`);
-    const text = await res.text();
-
-    hideLoading();
-
-    if(text.trim() === "BERHASIL_HAPUS") {
-      // Ambil detail struk dari backup local agar objek item menu kembali utuh di keranjang kasir
-      let backupData = JSON.parse(localStorage.getItem("backupItems")) || {};
-      if(backupData[namaReal]) {
-        cart = [...backupData[namaReal]];
-        delete backupData[namaReal]; // Bersihkan file backup
-        localStorage.setItem("backupItems", JSON.stringify(backupData));
-      } else {
-        // Fallback jika dibuka dari HP lain yang belum punya local-backup item objeknya
-        cart = [{ nama: `Pesanan Gantung: ${namaReal}`, harga: 0, qty: 1 }];
-      }
-
-      saveLocal();
-      renderCart();
-      document.getElementById("pesananModal").style.display = "none";
-      openCart();
-      await loadDaftarGantungFromServer();
-    } else {
-      alert("Gagal mengambil pesanan, kemungkinan sudah dihapus/diubah");
-    }
-  } catch(err) {
-    hideLoading();
-    console.error(err);
-    alert("Koneksi buruk, gagal menarik data!");
-  }
+// Buka Modal Konfirmasi Hapus
+function bukaKonfirmasiHapus(rowNumber) {
+  barisDipilih = rowNumber;
+  document.getElementById("judulKonfirmasi").innerText = "Yakin mau hapus pesanan ini?";
+  document.getElementById("btnYaHapus").onclick = function() {
+    eksekusiHapusPesanan();
+  };
+  document.getElementById("konfirmasiHapusModal").style.display = "flex";
 }
 
-// 4. Fungsi menghapus pesanan gantung
-async function hapusPesanan(rowNumber){
-  const yakin = confirm("Hapus pesanan ini dari database?");
-  if(!yakin) return;
+// Buka Modal Konfirmasi Ambil/Bayar
+function bukaKonfirmasiAmbil(rowNumber, escapedNama) {
+  barisDipilih = rowNumber;
+  namaDipilih = escapedNama;
+  document.getElementById("judulKonfirmasi").innerText = "Ambil antrean untuk pelanggan ini?";
+  document.getElementById("btnYaHapus").onclick = function() {
+    eksekusiLoadPesanan();
+  };
+  document.getElementById("konfirmasiHapusModal").style.display = "flex";
+}
 
+// Eksekusi Hapus Riil Ke Google Sheets
+async function eksekusiHapusPesanan(){
+  tutupKonfirmasiHapus();
   showLoading();
 
   try {
-    const res = await fetch(`${GANTUNG_URL}?action=hapusPelangganGantung&rowNumber=${rowNumber}`);
+    const res = await fetch(`${GANTUNG_URL}?action=hapusPelangganGantung&rowNumber=${barisDipilih}`);
     const text = await res.text();
 
     hideLoading();
@@ -858,7 +846,44 @@ async function hapusPesanan(rowNumber){
   }
 }
 
-// JALANKAN OTOMATIS SAAT HALAMAN DI-LOAD
+// Eksekusi Ambil Riil Ke Kasir Utama & Hapus Dari Google Sheets
+async function eksekusiLoadPesanan(){
+  tutupKonfirmasiHapus();
+  const namaReal = unescape(namaDipilih);
+  showLoading();
+
+  try {
+    const res = await fetch(`${GANTUNG_URL}?action=hapusPelangganGantung&rowNumber=${barisDipilih}`);
+    const text = await res.text();
+
+    hideLoading();
+
+    if(text.trim() === "BERHASIL_HAPUS") {
+      let backupData = JSON.parse(localStorage.getItem("backupItems")) || {};
+      if(backupData[namaReal]) {
+        cart = [...backupData[namaReal]];
+        delete backupData[namaReal]; 
+        localStorage.setItem("backupItems", JSON.stringify(backupData));
+      } else {
+        cart = [{ nama: `Pesanan Gantung: ${namaReal}`, harga: 0, qty: 1 }];
+      }
+
+      saveLocal();
+      renderCart();
+      document.getElementById("pesananModal").style.display = "none";
+      openCart();
+      await loadDaftarGantungFromServer();
+    } else {
+      alert("Gagal mengambil pesanan");
+    }
+  } catch(err) {
+    hideLoading();
+    console.error(err);
+    alert("Koneksi buruk, gagal menarik data!");
+  }
+}
+
+// INITIAL START RUNNING
 loadProduk();
 renderCart();
 loadDaftarGantungFromServer();
