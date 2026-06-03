@@ -811,11 +811,17 @@ function bukaKonfirmasiHapus(rowNumber) {
   document.getElementById("konfirmasiHapusModal").style.display = "flex";
 }
 
-// Buka Modal Konfirmasi Ambil/Bayar
+// Buka Modal Konfirmasi Ambil/Bayar dengan NAMA OTOMATIS
 function bukaKonfirmasiAmbil(rowNumber, escapedNama) {
   barisDipilih = rowNumber;
   namaDipilih = escapedNama;
-  document.getElementById("judulKonfirmasi").innerText = "Ambil antrean untuk pelanggan ini?";
+  
+  // Mengubah teks escape kembali jadi teks biasa
+  const namaReal = unescape(escapedNama); 
+  
+  // Mengubah kalimat notice secara dinamis sesuai nama pelanggan
+  document.getElementById("judulKonfirmasi").innerText = `Proses Bayar untuk ${namaReal}?`;
+  
   document.getElementById("btnYaHapus").onclick = function() {
     eksekusiLoadPesanan();
   };
