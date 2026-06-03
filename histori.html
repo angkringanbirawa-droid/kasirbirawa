@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Histori Transaksi</title>
+<title>Histori Transaksi - BirawaPOS</title>
 
 <style>
 
@@ -17,8 +17,7 @@
 body{
   background:#111;
   color:white;
-  /* PERBAIKAN: Gunakan padding atas dinamis agar konten utama (.container) berada tepat di bawah header yang membesar */
-  padding: calc(65px + env(safe-area-inset-top, 24px)) 20px 20px 20px;
+  padding: calc(65px + env(safe-area-inset-top, 24px)) 16px 20px 16px;
 }
 
 .container{
@@ -30,13 +29,16 @@ body{
   background:#1d1d1d;
   border:1px solid #2a2a2a;
   border-radius:18px;
-  padding:20px;
+  padding:16px;
 }
 
 h2{
   text-align:center;
   color:#facc15;
   margin-bottom:20px;
+  font-size:20px;
+  font-weight:bold;
+  letter-spacing: 0.5px;
 }
 
 .filter{
@@ -47,38 +49,70 @@ h2{
 
 select{
   flex:1;
-  padding:12px;
+  padding:14px;
   border:none;
-  border-radius:10px;
+  border-radius:12px;
   background:#2b2b2b;
   color:white;
-}
-
-.summary{
-  background:#2b2b2b;
-  padding:15px;
-  border-radius:12px;
-  margin-bottom:20px;
-  text-align:center;
-}
-
-.summary h3{
-  color:#aaa;
   font-size:14px;
-  margin-bottom:8px;
+  outline:none;
 }
 
-.summary .omset{
-  color:#facc15;
-  font-size:26px;
-  font-weight:bold;
+/* ======================================================== */
+/* PERBAIKAN TOTAL: GRID RINGKASAN FINANSIAL PREMIUM BIRAWA */
+/* ======================================================== */
+.financial-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
+.fin-box {
+  background: #222;
+  border: 1px solid #2a2a2a;
+  padding: 12px 14px;
+  border-radius: 14px;
+}
+
+.fin-box.full-width {
+  grid-column: span 2;
+  background: linear-gradient(135deg, #1e1b4b 0%, #111 100%);
+  border: 1px solid #312e81;
+  text-align: center;
+  padding: 16px;
+}
+
+.fin-label {
+  font-size: 11px;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.fin-value {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.fin-value.masuk { color: #00e676; }
+.fin-value.keluar { color: #ff5252; }
+.fin-value.saldo { 
+  color: #facc15; 
+  font-size: 24px;
+}
+
+/* LIST ITEM */
 .item{
-  background:#2b2b2b;
-  border-radius:12px;
+  background:#222;
+  border-radius:14px;
   padding:15px;
   margin-bottom:12px;
+  border: 1px solid #2a2a2a;
 }
 
 .top{
@@ -91,6 +125,7 @@ select{
 .id{
   color:#facc15;
   font-weight:bold;
+  font-size:14px;
 }
 
 .total{
@@ -100,7 +135,7 @@ select{
 
 .detail{
   color:#ccc;
-  font-size:14px;
+  font-size:13px;
   margin-top:4px;
 }
 
@@ -108,6 +143,7 @@ select{
   text-align:center;
   color:#888;
   margin-top:30px;
+  font-size:14px;
 }
 
 /* HEADER */
@@ -118,7 +154,6 @@ select{
   width:100%;
   z-index:1000;
   background:#1b1b1b;
-  /* PERBAIKAN: Beri ruang di atas teks header sesuai tinggi status bar bawaan HP */
   padding: calc(15px + env(safe-area-inset-top, 24px)) 20px 15px 20px;
   display:flex;
   justify-content:space-between;
@@ -134,6 +169,7 @@ select{
 .title{
   color:#facc15;
   font-weight:bold;
+  font-size:18px;
 }
 
 /* SIDEBAR */
@@ -144,7 +180,6 @@ select{
   position:fixed;
   top:0;
   left:-260px;
-  /* PERBAIKAN: Padding diubah agar konten profil & menu turun ke bawah, tidak tertutup status bar */
   padding-top: calc(20px + env(safe-area-inset-top, 24px));
   transition:0.3s;
   z-index:9999;
@@ -226,7 +261,7 @@ select{
 
 <div class="header">
   <div class="menu-btn" onclick="openSidebar()">☰</div>
-  <div class="title"></div>
+  <div class="title">BIRAWA POS</div>
   <div></div>
 </div>
 
@@ -247,6 +282,7 @@ select{
 <div class="container">
   <div class="card">
     <h2>HISTORI TRANSAKSI</h2>
+    
     <div class="filter">
       <select id="bulan" onchange="filterData()">
         <option value="">Bulan</option>
@@ -269,10 +305,8 @@ select{
       </select>
     </div>
 
-    <div class="summary">
-      <h3>Total Omset</h3>
-      <div class="omset" id="totalOmset">Rp 0</div>
-    </div>
+    <div class="financial-grid" id="totalOmset">
+       </div>
 
     <div id="list"></div>
   </div>
@@ -286,18 +320,13 @@ const URL = "https://script.google.com/macros/s/AKfycbxpzfOKXJkXqUJbz8b9WeJXJxti
 
 let allData = [];
 
-// =====================
-// TAHUN
-// =====================
+// Taruh tahun dinamis
 for(let i=2030;i>=2025;i--){
   document.getElementById("tahun").innerHTML += `
     <option value="${i}">${i}</option>
   `;
 }
 
-// =====================
-// LOAD
-// =====================
 async function loadHistory(){
   try{
     const [trxRes,pengRes] = await Promise.all([
@@ -330,7 +359,6 @@ async function loadHistory(){
       });
     });
 
-    // URUTKAN TERBARU
     gabungan.sort((a,b)=> new Date(b.tanggal) - new Date(a.tanggal));
     allData = gabungan;
     renderData(gabungan);
@@ -341,9 +369,6 @@ async function loadHistory(){
   }
 }
 
-// =====================
-// FILTER
-// =====================
 function filterData(){
   const bulan = document.getElementById("bulan").value;
   const tahun = document.getElementById("tahun").value;
@@ -362,16 +387,13 @@ function filterData(){
   renderData(filtered);
 }
 
-// =====================
-// RENDER
-// =====================
 function renderData(data){
   let html = "";
   let totalMasuk = 0;
   let totalKeluar = 0;
 
   if(data.length === 0){
-    html = "<div class='empty'>Belum ada data</div>";
+    html = "<div class='empty'>Belum ada data transaksi</div>";
   }else{
     data.forEach(item=>{
       if(item.tipe === "masuk"){
@@ -405,18 +427,25 @@ function renderData(data){
 
   const laba = totalMasuk - totalKeluar;
 
+  // JALUR RENDER STYLING CARD BARU BIAR MAKIN JOS & ELEGAN
   document.getElementById("totalOmset").innerHTML = `
-    <div style="color:#00e676">Masuk : Rp ${formatRupiah(totalMasuk)}</div>
-    <div style="color:#ff5252;margin-top:8px">Keluar : Rp ${formatRupiah(totalKeluar)}</div>
-    <div style="margin-top:10px; font-size:28px; font-weight:bold; color:#facc15">Saldo : Rp ${formatRupiah(laba)}</div>
+    <div class="fin-box">
+      <div class="fin-label">🟢 Masuk</div>
+      <div class="fin-value masuk">Rp ${formatRupiah(totalMasuk)}</div>
+    </div>
+    <div class="fin-box">
+      <div class="fin-label">🔴 Keluar</div>
+      <div class="fin-value keluar">Rp ${formatRupiah(totalKeluar)}</div>
+    </div>
+    <div class="fin-box full-width">
+      <div class="fin-label" style="justify-content:center;">💳 Sisa Saldo Bersih</div>
+      <div class="fin-value saldo">Rp ${formatRupiah(laba)}</div>
+    </div>
   `;
 
   document.getElementById("list").innerHTML = html;
 }
 
-// =====================
-// FORMAT
-// =====================
 function formatTanggal(tanggal){
   const d = new Date(tanggal);
   return d.toLocaleString("id-ID", {
@@ -437,7 +466,6 @@ function openSidebar(){
   document.getElementById("overlay").classList.add("active");
 }
 
-/* SIDEBAR CONTROLS */
 function closeSidebar(){
   document.getElementById("sidebar").classList.remove("active");
   document.getElementById("overlay").classList.remove("active");
@@ -473,8 +501,8 @@ async function toggleDetail(id){
   }else{
     data.forEach(item=>{
       html += `
-        <div class="detail">
-          🍜 ${item.nama_produk} (${item.qty}x) - Rp ${formatRupiah(item.subtotal)}
+        <div class="detail" style="background:#2b2b2b; padding:8px 12px; margin-bottom:4px; border-radius:8px; font-size:13px;">
+          🍜 <b>${item.nama_produk}</b> (${item.qty}x) <span style="float:right; color:#facc15;">Rp ${formatRupiah(item.subtotal)}</span>
         </div>
       `;
     });
