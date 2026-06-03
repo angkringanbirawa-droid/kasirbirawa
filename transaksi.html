@@ -23,20 +23,13 @@ body{
 
 .header{
   background:#1b1b1b;
-
-  padding-top:35px;
-  padding-right:18px;
-  padding-bottom:18px;
-  padding-left:18px;
-
+  padding:18px;
   display:flex;
   justify-content:space-between;
   align-items:center;
-
   position:sticky;
   top:0;
   z-index:100;
-
   border-bottom:1px solid #2a2a2a;
 }
 
@@ -92,13 +85,9 @@ body{
   width:260px;
   height:100vh;
   background:#1c1c1c;
-
   position:fixed;
   top:0;
   left:-260px;
-
-  padding-top:45px;
-
   transition:0.3s;
   z-index:999;
 }
@@ -465,10 +454,11 @@ body{
 
 <!-- SIDEBAR -->
 
-<a href="data.html">🏠 Dashboard</a>
-  <a href="Absensi">🏠 Absensi</a>
+<div class="sidebar" id="sidebar">
+
+  <a href="data.html">🏠 Dashboard</a>
   <a href="transaksi.html">💰 Transaksi</a>
-  <a href="histori.html">🍜 Riwayat Transaksi</a>
+  <a href="input.html">🍜 Kelola Produk</a>
 
 </div>
 
