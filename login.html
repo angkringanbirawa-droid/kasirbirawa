@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>BirawaPOS Login</title>
 
 <style>
@@ -78,7 +78,6 @@ body::after{
   text-align:center;
   z-index:3;
   backdrop-filter:blur(10px);
-
   animation:pop 1s ease;
 }
 
@@ -130,7 +129,6 @@ button{
   background:#facc15;
   font-weight:bold;
   cursor:pointer;
-
   transition:0.3s;
 }
 
@@ -147,24 +145,26 @@ button:hover{
 
 /* HIDDEN */
 .hidden{
-  display:none;
+  display:none !important;
 }
 
-/* LOADING */
-.loading{
+/* ======================================= */
+/* PERBAIKAN: LAYOUT LOADING DIKUNCI DI ATAS */
+/* ======================================= */
+#loading{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,0.9);
-  display:none;
+  background:rgba(0,0,0,0.85); /* Sedikit diturunkan opasitas hitamnya agar terkesan smooth */
+  display:none; /* Diatur default none, akan diubah murni lewat JS flex */
   justify-content:center;
   align-items:center;
-  z-index:10;
+  z-index:99999; /* Dinaikkan ke tingkat maksimal agar tidak tenggelam di bawah box */
 }
 
 .spinner{
   width:60px;
   height:60px;
-  border:6px solid #333;
+  border:6px solid #222;
   border-top:6px solid #facc15;
   border-radius:50%;
   animation:spin 1s linear infinite;
@@ -176,13 +176,11 @@ button:hover{
 
 </style>
 </head>
-
 <body>
 
 <div class="flash"></div>
 
 <div class="box">
-
   <h2>Yuk Login</h2>
 
   <div id="menu">
@@ -202,24 +200,21 @@ button:hover{
     <button onclick="loginKaryawan()">MASUK KARYAWAN</button>
     <button class="back" onclick="back()">KEMBALI</button>
   </div>
-
 </div>
 
-<div class="loading" id="loading">
+<div id="loading">
   <div class="spinner"></div>
 </div>
 
 <script>
-
-const URL =
-"https://script.google.com/macros/s/AKfycbzdiABCZIRA7mWd6zx1vSFmnFEK6vm4polW3-hzHlilfeagTnN8V7yf9UO-BdCOKDUb/exec";
+const URL = "https://script.google.com/macros/s/AKfycbzdiABCZIRA7mWd6zx1vSFmnFEK6vm4polW3-hzHlilfeagTnN8V7yf9UO-BdCOKDUb/exec";
 
 function showLoading(){
-  document.getElementById("loading").style.display = "flex";
+  document.getElementById("loading").style.setProperty("display", "flex", "important");
 }
 
 function hideLoading(){
-  document.getElementById("loading").style.display = "none";
+  document.getElementById("loading").style.setProperty("display", "none", "important");
 }
 
 function showOwner(){
@@ -239,28 +234,31 @@ function back(){
 }
 
 async function loginOwner(){
-
   const pin = document.getElementById("pin").value;
   if(!pin) return alert("Isi PIN");
 
   showLoading();
 
-  const res = await fetch(`${URL}?action=ownerLogin&pin=${pin}`);
-  const text = await res.text();
+  try {
+    const res = await fetch(`${URL}?action=ownerLogin&pin=${pin}`);
+    const text = await res.text();
 
-  hideLoading();
+    hideLoading();
 
-  if(text.trim()==="OWNER_SUCCESS"){
-    localStorage.setItem("loggedIn","true");
-    localStorage.setItem("role","owner");
-    window.location.href="data.html";
-  }else{
-    alert("PIN salah");
+    if(text.trim()==="OWNER_SUCCESS"){
+      localStorage.setItem("loggedIn","true");
+      localStorage.setItem("role","owner");
+      window.location.href="data.html";
+    }else{
+      alert("PIN salah");
+    }
+  } catch(err) {
+    hideLoading();
+    alert("Gagal terhubung ke server");
   }
 }
 
 async function loginKaryawan(){
-
   const user = document.getElementById("user").value;
   const pass = document.getElementById("pass").value;
 
@@ -268,21 +266,25 @@ async function loginKaryawan(){
 
   showLoading();
 
-  const res = await fetch(`${URL}?action=login&username=${user}&password=${pass}`);
-  const text = await res.text();
+  try {
+    const res = await fetch(`${URL}?action=login&username=${user}&password=${pass}`);
+    const text = await res.text();
 
-  hideLoading();
+    hideLoading();
 
-  if(text.trim()==="LOGIN BERHASIL"){
-    localStorage.setItem("loggedIn","true");
-    localStorage.setItem("role","karyawan");
-    localStorage.setItem("username",user);
-    window.location.href="data.html";
-  }else{
-    alert(text);
+    if(text.trim()==="LOGIN BERHASIL"){
+      localStorage.setItem("loggedIn","true");
+      localStorage.setItem("role","karyawan");
+      localStorage.setItem("username",user);
+      window.location.href="data.html";
+    }else{
+      alert(text);
+    }
+  } catch(err) {
+    hideLoading();
+    alert("Gagal terhubung ke server");
   }
 }
-
 </script>
 
 </body>
