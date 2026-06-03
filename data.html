@@ -227,18 +227,16 @@
       display:grid;
       grid-template-columns: 1fr 1fr;
       gap:10px;
-      margin-bottom: 20px;
     }
 
-    /* ======================================================== */
-    /* NEW STYLING: KOTAK ATURAN SOP & PERINGATAN KARYAWAN BIRAWA*/
-    /* ======================================================== */
+    /* KOTAK ATURAN SOP & PERINGATAN KARYAWAN */
     .sop-card {
       background: #181818;
       border: 1px dashed #333;
       border-radius: 16px;
       padding: 18px;
       margin-top: 15px;
+      position: relative;
     }
 
     .sop-title {
@@ -293,7 +291,7 @@
       line-height: 1.4;
     }
 
-    /* FOOTER */
+    /* PERBAIKAN POSISI FOOTER SESUAI CORETAN SCREENSHOT */
     footer{
       width:100%;
       text-align:center;
@@ -301,8 +299,9 @@
       font-size:11px;
       letter-spacing: 0.5px;
       border-top:1px solid #222;
-      padding: 25px 10px calc(15px + env(safe-area-inset-bottom, 0px)) 10px;
-      margin-top: 30px;
+      padding-top: 15px;
+      margin-top: 25px;
+      padding-bottom: calc(5px + env(safe-area-inset-bottom, 0px));
     }
   </style>
 </head>
@@ -385,11 +384,11 @@
         Ybs,<br>
         <b>P4170 Tamvan Forever</b>
       </div>
-    </div>
 
-    <footer>
-      Birawa 2026 | BY P4170
-    </footer>
+      <footer>
+        Birawa 2026 | BY P4170
+      </footer>
+    </div>
 
   </div>
 
@@ -438,7 +437,7 @@
         const data = await res.json();
         const sekarang = new Date();
         const hariIni = sekarang.getDate();
-        const bulanIni = abnormality = sekarang.getMonth();
+        const bulanIni = sekarang.getMonth();
         const tahunIni = sekarang.getFullYear();
 
         omsetHariIni = 0;
