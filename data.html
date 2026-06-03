@@ -173,7 +173,7 @@
       margin-bottom:6px;
     }
 
-    /* CARD STYLING PERBAIKAN TOTAL */
+    /* CARD STYLING */
     .card{
       background:#1e1e1e;
       border-radius:18px;
@@ -221,28 +221,88 @@
       cursor:pointer;
       text-decoration: none;
     }
-    
-    .small-link:hover {
-      text-decoration: underline;
-    }
 
     /* GRID COLS */
     .grid{
       display:grid;
       grid-template-columns: 1fr 1fr;
       gap:10px;
+      margin-bottom: 20px;
+    }
+
+    /* ======================================================== */
+    /* NEW STYLING: KOTAK ATURAN SOP & PERINGATAN KARYAWAN BIRAWA*/
+    /* ======================================================== */
+    .sop-card {
+      background: #181818;
+      border: 1px dashed #333;
+      border-radius: 16px;
+      padding: 18px;
+      margin-top: 15px;
+    }
+
+    .sop-title {
+      font-size: 13px;
+      color: #facc15;
+      font-weight: bold;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    .sop-list {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .sop-list li {
+      font-size: 13px;
+      color: #ccc;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+
+    .warning-box {
+      background: rgba(239, 68, 68, 0.05);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 14px;
+      text-align: center;
+    }
+
+    .warning-title {
+      color: #ff5252;
+      font-weight: bold;
+      font-size: 14px;
+      letter-spacing: 2px;
+      margin-bottom: 4px;
+    }
+
+    .warning-text {
+      color: #ff8888;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .sop-signature {
+      text-align: right;
+      margin-top: 15px;
+      font-size: 12px;
+      color: #888;
+      line-height: 1.4;
     }
 
     /* FOOTER */
     footer{
       width:100%;
       text-align:center;
-      color:#555;
+      color:#444;
       font-size:11px;
       letter-spacing: 0.5px;
       border-top:1px solid #222;
-      padding: 35px 10px calc(15px + env(safe-area-inset-bottom, 0px)) 10px;
-      margin-top: 25px;
+      padding: 25px 10px calc(15px + env(safe-area-inset-bottom, 0px)) 10px;
+      margin-top: 30px;
     }
   </style>
 </head>
@@ -259,28 +319,13 @@
       <div class="profile-name" id="profileName">Karyawan</div>
       <div class="profile-role" id="profileRole">Karyawan Teladan</div>
     </div>
-
-    <a href="absensi.html">
-      <span class="icon">🕒</span> Absensi
-    </a>
-    <a href="input.html" class="menu-owner">
-      <span class="icon">🍜</span> Kelola Produk
-    </a>
-    <a href="transaksi.html" class="menu-karyawan">
-      <span class="icon">💰</span> Transaksi
-    </a>
-    <a href="histori.html" class="menu-karyawan">
-      <span class="icon">🧾</span> Histori Transaksi
-    </a>
-    <a href="regpeg.html" class="menu-owner">
-      <span class="icon">👨‍🍳</span> Pendaftaran Pegawai
-    </a>
-    <a href="#">
-      <span class="icon">🖨️</span> Pengaturan Printer
-    </a>
-    <a href="javascript:void(0)" onclick="logout()">
-      <span class="icon">🚪</span> Logout
-    </a>
+    <a href="absensi.html">🕒 Absensi</a>
+    <a href="input.html" class="menu-owner">🍜 Kelola Produk</a>
+    <a href="transaksi.html" class="menu-karyawan">💰 Transaksi</a>
+    <a href="histori.html" class="menu-karyawan">🧾 Histori Transaksi</a>
+    <a href="regpeg.html" class="menu-owner">👨‍🍳 Pendaftaran Pegawai</a>
+    <a href="#">🖨️ Pengaturan Printer</a>
+    <a href="javascript:void(0)" onclick="logout()">🚪 Logout</a>
   </div>
 
   <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
@@ -318,6 +363,27 @@
         <div class="card-title">🔴 Total Keluar</div>
         <div class="card-value keluar" id="pengeluaranHariIni">Rp 0</div>
         <div class="small-link" onclick="window.location.href='pengeluaran.html'">Detail ➔</div>
+      </div>
+    </div>
+
+    <div class="sop-card">
+      <div class="sop-title">📋 SOP Karyawan Birawa</div>
+      <ul class="sop-list">
+        <li>1. Minimal mandi sebelum dagang</li>
+        <li>2. Minimal jangan dekil</li>
+        <li>3. Berdoa agar selamat berangkat dan pulang</li>
+        <li>4. Berdoa biar laris manis</li>
+        <li>5. Jangan godain cewek-cewek</li>
+      </ul>
+
+      <div class="warning-box">
+        <div class="warning-title">🚨 WARNING 🚨</div>
+        <div class="warning-text">DILARANG MAKSIAT DI TEMPAT USAHA, NANTI LU MASUK NERAKA!!!</div>
+      </div>
+
+      <div class="sop-signature">
+        Ybs,<br>
+        <b>P4170 Tamvan Forever</b>
       </div>
     </div>
 
@@ -372,7 +438,7 @@
         const data = await res.json();
         const sekarang = new Date();
         const hariIni = sekarang.getDate();
-        const bulanIni = sekarang.getMonth();
+        const bulanIni = abnormality = sekarang.getMonth();
         const tahunIni = sekarang.getFullYear();
 
         omsetHariIni = 0;
