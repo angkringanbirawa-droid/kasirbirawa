@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Pengeluaran - BirawaPOS</title>
 
 <style>
@@ -17,11 +17,19 @@
 body{
   background:#111;
   color:white;
+  /* PERBAIKAN: Padding atas dinamis mengikuti tinggi header aman status bar */
+  padding: calc(65px + env(safe-area-inset-top, 24px)) 16px 20px 16px;
 }
 
+/* HEADER */
 .header{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
   background:#1b1b1b;
-  padding:18px;
+  padding: calc(15px + env(safe-area-inset-top, 24px)) 20px 15px 20px;
   display:flex;
   align-items:center;
   gap:15px;
@@ -37,21 +45,20 @@ body{
   font-size:20px;
   font-weight:bold;
   color:#facc15;
+  letter-spacing: 0.5px;
 }
 
+/* SIDEBAR */
 .sidebar{
   width:260px;
   height:100vh;
   background:#1c1c1c;
-
   position:fixed;
   top:0;
   left:-260px;
-
-  padding-top:45px;
-
+  padding-top: calc(20px + env(safe-area-inset-top, 24px));
   transition:0.3s;
-  z-index:999;
+  z-index:9999;
 }
 
 .sidebar.active{
@@ -64,6 +71,7 @@ body{
   color:white;
   text-decoration:none;
   border-bottom:1px solid #2a2a2a;
+  font-size: 15px;
 }
 
 .sidebar a:hover{
@@ -74,7 +82,7 @@ body{
   position:fixed;
   width:100%;
   height:100vh;
-  background:rgba(0,0,0,.5);
+  background:rgba(0,0,0,.6);
   display:none;
   top:0;
   left:0;
@@ -85,27 +93,36 @@ body{
   display:block;
 }
 
+/* CONTENT CONTAINER */
 .container{
-  padding:20px;
+  max-width: 600px;
+  margin: auto;
+  padding-top: 10px;
 }
 
 .card{
-  background:#1d1d1d;
+  background:#1e1e1e;
   border-radius:18px;
-  padding:18px;
-  margin-bottom:20px;
+  padding:20px;
+  margin-bottom:25px;
   border:1px solid #2a2a2a;
 }
 
 .input{
   width:100%;
   padding:14px;
-  border:none;
+  border:1px solid transparent;
   border-radius:12px;
   background:#2a2a2a;
   color:white;
-  margin-bottom:12px;
+  margin-bottom:14px;
   outline:none;
+  font-size:14px;
+  transition: 0.2s;
+}
+
+.input:focus{
+  border-color: #facc15;
 }
 
 .btn{
@@ -116,45 +133,58 @@ body{
   background:#facc15;
   color:#111;
   font-weight:bold;
+  font-size:15px;
   cursor:pointer;
+  transition: 0.2s;
+}
+
+.btn:active{
+  transform: scale(0.98);
 }
 
 .section-title{
-  font-size:18px;
+  font-size:15px;
   font-weight:bold;
-  color:#facc15;
+  color:#aaa;
   margin-bottom:15px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
+/* LIST ITEM EXPENSE ELEGAN */
 .item{
-  background:#1d1d1d;
-  padding:15px;
-  border-radius:15px;
+  background:#1e1e1e;
+  padding:15px 18px;
+  border-radius:14px;
   margin-bottom:12px;
   border:1px solid #2a2a2a;
+  border-left: 5px solid #ef4444; /* Penanda Visual Merah Pengeluaran */
 }
 
 .item-keperluan{
-  font-size:16px;
+  font-size:15px;
   font-weight:bold;
+  color: #fff;
 }
 
 .item-nominal{
-  color:#ef4444;
+  color:#ff5252;
   font-weight:bold;
-  margin-top:6px;
+  font-size: 16px;
+  margin-top:4px;
 }
 
 .item-tanggal{
   color:#888;
   font-size:12px;
-  margin-top:5px;
+  margin-top:6px;
 }
 
 .empty{
   text-align:center;
   color:#666;
-  margin-top:20px;
+  margin-top:30px;
+  font-size: 14px;
 }
 
 </style>
@@ -162,49 +192,35 @@ body{
 <body>
 
 <div class="header">
-
-  <div class="menu-btn" onclick="openSidebar()">
-    ☰
-  </div>
-
-  <div class="title">
-    Pengeluaran
-  </div>
-
+  <div class="menu-btn" onclick="openSidebar()">☰</div>
+  <div class="title">PENGELUARAN</div>
 </div>
 
 <div class="sidebar" id="sidebar">
-
   <a href="data.html">🏠 Dashboard</a>
   <a href="transaksi.html">💰 Transaksi</a>
   <a href="histori.html">🧾 Histori</a>
   <a href="pengeluaran.html">📉 Pengeluaran</a>
   <a href="input.html">🍜 Kelola Produk</a>
-
 </div>
 
-<div
-class="overlay"
-id="overlay"
-onclick="closeSidebar()">
-</div>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
 <div class="container">
 
   <div class="card">
-
     <input
       type="number"
       id="jumlah"
       class="input"
-      placeholder="Jumlah Pengeluaran"
+      placeholder="Jumlah Pengeluaran (Rp)"
     >
 
     <input
       type="text"
       id="keperluan"
       class="input"
-      placeholder="Keperluan"
+      placeholder="Keperluan / Keterangan"
     >
 
     <button
@@ -213,19 +229,16 @@ onclick="closeSidebar()">
     >
       SIMPAN PENGELUARAN
     </button>
-
   </div>
 
   <div class="section-title">
-    Histori Pengeluaran
+    Histori Pengeluaran Hari Ini
   </div>
 
   <div id="listPengeluaran">
-
     <div class="empty">
-      Loading...
+      Loading data...
     </div>
-
   </div>
 
 </div>
@@ -234,130 +247,83 @@ onclick="closeSidebar()">
 if (localStorage.getItem("loggedIn") !== "true") {
   window.location.href = "login.html";
 }
-const URL =
-"https://script.google.com/macros/s/AKfycbxpzfOKXJkXqUJbz8b9WeJXJxti5CRSIslQVfVgXviPftSVap8mpqjfuTnZwuz-GOs/exec";
+const URL = "https://script.google.com/macros/s/AKfycbxpzfOKXJkXqUJbz8b9WeJXJxti5CRSIslQVfVgXviPftSVap8mpqjfuTnZwuz-GOs/exec";
 
 function openSidebar(){
-
-  document
-  .getElementById("sidebar")
-  .classList.add("active");
-
-  document
-  .getElementById("overlay")
-  .classList.add("active");
-
+  document.getElementById("sidebar").classList.add("active");
+  document.getElementById("overlay").classList.add("active");
 }
 
 function closeSidebar(){
-
-  document
-  .getElementById("sidebar")
-  .classList.remove("active");
-
-  document
-  .getElementById("overlay")
-  .classList.remove("active");
-
+  document.getElementById("sidebar").classList.remove("active");
+  document.getElementById("overlay").classList.remove("active");
 }
 
 async function simpanPengeluaran(){
-
-  const jumlah =
-  document
-  .getElementById("jumlah")
-  .value;
-
-  const keperluan =
-  document
-  .getElementById("keperluan")
-  .value;
+  const jumlah = document.getElementById("jumlah").value;
+  const keperluan = document.getElementById("keperluan").value;
 
   if(!jumlah || !keperluan){
-
-    alert("Lengkapi data");
-
+    alert("Lengkapi data pengeluaran!");
     return;
-
   }
 
-  const res =
-  await fetch(
+  try {
+    const res = await fetch(`${URL}?action=addPengeluaran&jumlah=${jumlah}&keperluan=${encodeURIComponent(keperluan)}`);
+    const result = await res.text();
+    
+    alert(result);
 
-`${URL}?action=addPengeluaran&jumlah=${jumlah}&keperluan=${encodeURIComponent(keperluan)}`
+    document.getElementById("jumlah").value = "";
+    document.getElementById("keperluan").value = "";
 
-  );
-
-  const result =
-  await res.text();
-
-  alert(result);
-
-  document
-  .getElementById("jumlah")
-  .value = "";
-
-  document
-  .getElementById("keperluan")
-  .value = "";
-
-  loadPengeluaran();
-
+    loadPengeluaran();
+  } catch (err) {
+    console.log(err);
+    alert("Gagal terhubung ke server.");
+  }
 }
 
 async function loadPengeluaran(){
+  try {
+    const res = await fetch(`${URL}?action=getPengeluaran`);
+    const data = await res.json();
 
-  const res =
-  await fetch(
-    `${URL}?action=getPengeluaran`
-  );
+    let html = "";
 
-  const data =
-  await res.json();
-
-  let html = "";
-
-  data.reverse().forEach(item=>{
-
-    html += `
-
-      <div class="item">
-
-        <div class="item-keperluan">
-          ${item.keperluan}
+    data.reverse().forEach(item=>{
+      html += `
+        <div class="item">
+          <div class="item-keperluan">${item.keperluan || item.keterangan || "Pengeluaran"}</div>
+          <div class="item-nominal">- Rp ${Number(item.jumlah).toLocaleString("id-ID")}</div>
+          <div class="item-tanggal">📅 ${formatTanggal(item.tanggal)}</div>
         </div>
+      `;
+    });
 
-        <div class="item-nominal">
-          - Rp ${Number(item.jumlah).toLocaleString("id-ID")}
-        </div>
+    if(data.length === 0){
+      html = `<div class="empty">Belum ada catatan pengeluaran</div>`;
+    }
 
-        <div class="item-tanggal">
-          ${new Date(item.tanggal).toLocaleString("id-ID")}
-        </div>
-
-      </div>
-
-    `;
-
-  });
-
-  if(data.length === 0){
-
-    html =
-    `<div class="empty">
-      Belum ada pengeluaran
-    </div>`;
-
+    document.getElementById("listPengeluaran").innerHTML = html;
+  } catch(err) {
+    console.log(err);
+    document.getElementById("listPengeluaran").innerHTML = `<div class="empty">Gagal memuat histori</div>`;
   }
+}
 
-  document
-  .getElementById("listPengeluaran")
-  .innerHTML = html;
-
+function formatTanggal(tanggal){
+  const d = new Date(tanggal);
+  return d.toLocaleString("id-ID", {
+    day:"2-digit",
+    month:"long",
+    year:"numeric",
+    hour:"2-digit",
+    minute:"2-digit"
+  });
 }
 
 loadPengeluaran();
-
 </script>
 
 </body>
