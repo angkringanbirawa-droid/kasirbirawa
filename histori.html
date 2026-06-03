@@ -41,26 +41,24 @@ h2{
   letter-spacing: 0.5px;
 }
 
+/* FILTER GAYA BARU (3 KOLOM KARENA ADA HARI) */
 .filter{
   display:flex;
-  gap:10px;
+  gap:8px;
   margin-bottom:20px;
 }
 
 select{
   flex:1;
-  padding:14px;
+  padding:12px 8px;
   border:none;
   border-radius:12px;
   background:#2b2b2b;
   color:white;
-  font-size:14px;
+  font-size:13px;
   outline:none;
 }
 
-/* ======================================================== */
-/* PERBAIKAN TOTAL: GRID RINGKASAN FINANSIAL PREMIUM BIRAWA */
-/* ======================================================== */
 .financial-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -284,7 +282,11 @@ select{
     <h2>HISTORI TRANSAKSI</h2>
     
     <div class="filter">
-      <select id="bulan" onchange="filterData()">
+      <select id="tanggal" onchange="filterData()">
+        <option value="">Hari / Tgl</option>
+      </select>
+
+      <select id="bulan" onchange="updateTanggal(); filterData();">
         <option value="">Bulan</option>
         <option value="1">Januari</option>
         <option value="2">Februari</option>
@@ -300,13 +302,12 @@ select{
         <option value="12">Desember</option>
       </select>
 
-      <select id="tahun" onchange="filterData()">
+      <select id="tahun" onchange="updateTanggal(); filterData();">
         <option value="">Tahun</option>
       </select>
     </div>
 
-    <div class="financial-grid" id="totalOmset">
-       </div>
+    <div class="financial-grid" id="totalOmset"></div>
 
     <div id="list"></div>
   </div>
@@ -326,6 +327,38 @@ for(let i=2030;i>=2025;i--){
     <option value="${i}">${i}</option>
   `;
 }
+
+// Menghitung & generate jumlah hari secara otomatis sesuai Bulan + Tahun
+function updateTanggal() {
+  const tglSelect = document.getElementById("tanggal");
+  const bulan = document.getElementById("bulan").value;
+  const tahun = document.getElementById("tahun").value;
+  
+  // Simpan nilai tanggal yang sedang dipilih sebelum di-reset
+  const tglTerpilih = tglSelect.value;
+  
+  tglSelect.innerHTML = '<option value="">Hari / Tgl</option>';
+  
+  // Jika bulan & tahun belum dipilih, kita tampilkan standar 31 hari dulu
+  let jumlahHari = 31;
+  
+  if (bulan !== "" && tahun !== "") {
+    // Trik JS dapat total hari akhir dalam sebulan
+    jumlahHari = new Date(tahun, bulan, 0).getDate();
+  }
+  
+  for (let i = 1; i <= jumlahHari; i++) {
+    tglSelect.innerHTML += `<option value="${i}">${i}</option>`;
+  }
+  
+  // Kembalikan pilihan user jika tanggal tersebut masih ada di bulan baru
+  if (tglTerpilih <= jumlahHari) {
+    tglSelect.value = tglTerpilih;
+  }
+}
+
+// Jalankan generator tanggal default saat pertama dimuat
+updateTanggal();
 
 async function loadHistory(){
   try{
@@ -369,19 +402,23 @@ async function loadHistory(){
   }
 }
 
+// UPDATE: FUNGSI FILTER MENDUKUNG TANGGAL/HARI DINAMIS
 function filterData(){
+  const tanggal = document.getElementById("tanggal").value;
   const bulan = document.getElementById("bulan").value;
   const tahun = document.getElementById("tahun").value;
 
   const filtered = allData.filter(item=>{
     const date = new Date(item.tanggal);
+    const h = date.getDate();
     const b = date.getMonth()+1;
     const t = date.getFullYear();
 
+    const cocokHari = tanggal=="" || h==tanggal;
     const cocokBulan = bulan=="" || b==bulan;
     const cocokTahun = tahun=="" || t==tahun;
 
-    return cocokBulan && cocokTahun;
+    return cocokHari && cocokBulan && cocokTahun;
   });
 
   renderData(filtered);
@@ -427,7 +464,6 @@ function renderData(data){
 
   const laba = totalMasuk - totalKeluar;
 
-  // JALUR RENDER STYLING CARD BARU BIAR MAKIN JOS & ELEGAN
   document.getElementById("totalOmset").innerHTML = `
     <div class="fin-box">
       <div class="fin-label">🟢 Masuk</div>
