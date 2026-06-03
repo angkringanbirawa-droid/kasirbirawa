@@ -2,11 +2,10 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>BirawaPOS</title>
 
   <style>
-
     *{
       margin:0;
       padding:0;
@@ -15,35 +14,34 @@
     }
 
     body{
-  background:#111;
-  color:white;
-  padding-top:35px;
-}
+      background:#111;
+      color:white;
+      /* PERBAIKAN: Padding atas dinamis mengikuti tinggi status bar HP */
+      padding-top: calc(10px + env(safe-area-inset-top, 24px));
     }
 
     /* HEADER */
+    .header{
+      background:#1b1b1b;
+      padding:18px;
+      display:flex;
+      align-items:center;
+      border-bottom:1px solid #2a2a2a;
+    }
 
-.header{
-  background:#1b1b1b;
-  padding:18px;
-  display:flex;
-  align-items:center;
-}
+    .menu-btn{
+      font-size:28px;
+      cursor:pointer;
+    }
 
-.menu-btn{
-  font-size:28px;
-  cursor:pointer;
-}
-
-.title{
-  color:#facc15;
-  font-size:22px;
-  font-weight:bold;
-  margin-left:15px;
-}
+    .title{
+      color:#facc15;
+      font-size:22px;
+      font-weight:bold;
+      margin-left:15px;
+    }
 
     /* SIDEBAR */
-
     .sidebar{
       width:270px;
       height:100vh;
@@ -54,6 +52,8 @@
       transition:0.3s;
       z-index:999;
       overflow-y:auto;
+      /* PERBAIKAN: Beri padding top aman di dalam sidebar */
+      padding-top: env(safe-area-inset-top, 24px);
     }
 
     .sidebar.active{
@@ -61,7 +61,6 @@
     }
 
     /* PROFILE */
-
     .profile-box{
       padding:30px 20px;
       text-align:center;
@@ -90,7 +89,6 @@
     }
 
     /* SIDEBAR MENU */
-
     .sidebar a{
       display:flex;
       align-items:center;
@@ -111,7 +109,6 @@
     }
 
     /* OVERLAY */
-
     .overlay{
       position:fixed;
       width:100%;
@@ -128,13 +125,11 @@
     }
 
     /* CONTENT */
-
     .content{
       padding:20px;
     }
 
     /* QUICK MENU */
-
     .quick-menu{
       display:grid;
       grid-template-columns:repeat(3,1fr);
@@ -152,7 +147,6 @@
       cursor:pointer;
       transition:0.2s;
       min-height:100px;
-
       display:flex;
       flex-direction:column;
       justify-content:center;
@@ -170,7 +164,6 @@
     }
 
     /* CARD */
-
     .card{
       background:#1d1d1d;
       border-radius:18px;
@@ -200,437 +193,212 @@
     }
 
     /* GRID */
-
     .grid{
       display:grid;
       grid-template-columns:1fr 1fr;
       gap:15px;
     }
 
-    /* FOOTER */
-
-   footer{
-  width:100%;
-  box-sizing:border-box;
-
-  display:flex;
-  justify-content:center;
-  align-items:center;
-
-  text-align:center;
-
-  padding:20px 10px;
-  margin-top:30px;
-
-  color:#645f20;
-  font-size:clamp(10px, 3vw, 13px);
-  border-top:1px solid #222;
-}
-
+    /* PERBAIKAN TOTAL: FOOTER CENTER & PAS DIBAWAH */
+    footer{
+      width:100%;
+      display:block;
+      clear:both;
+      text-align:center;
+      /* Warna disesuaikan abu-abu redup elegan agar kontras tulisan terbaca jelas */
+      color:#666666;
+      font-size:12px;
+      letter-spacing: 0.5px;
+      border-top:1px solid #222;
+      padding: 40px 10px calc(20px + env(safe-area-inset-bottom, 0px)) 10px;
+      margin-top: 20px;
+      box-sizing:border-box;
+    }
   </style>
 </head>
 <body>
 
-  <!-- HEADER -->
-
   <div class="header">
-
-    <div class="menu-btn" onclick="openSidebar()">
-      ☰
-    </div>
-
-    <div class="title">
-      BIRAWA KASIR
-    </div>
-
+    <div class="menu-btn" onclick="openSidebar()">☰</div>
+    <div class="title">BIRAWA KASIR</div>
     <div></div>
-
   </div>
-
-  <!-- SIDEBAR -->
 
   <div class="sidebar" id="sidebar">
-
-    <!-- PROFILE -->
-
     <div class="profile-box">
-
-      <img 
-        src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-        class="profile-img"
-      >
-
-      <div class="profile-name" id="profileName">
-        INI GUE
-      </div>
-
-      <div class="profile-role">
-        Karyawan Teladan
-      </div>
-
+      <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="profile-img">
+      <div class="profile-name" id="profileName">INI GUE</div>
+      <div class="profile-role">Karyawan Teladan</div>
     </div>
 
-    <!-- MENU -->
-
     <a href="absensi.html">
-      <span class="icon">🕒</span>
-      Absensi
+      <span class="icon">🕒</span> Absensi
     </a>
-
     <a href="input.html" class="menu-owner">
-      <span class="icon">🍜</span>
-      Kelola Produk
+      <span class="icon">🍜</span> Kelola Produk
     </a>
-
     <a href="transaksi.html" class="menu-karyawan">
-      <span class="icon">💰</span>
-      Transaksi
+      <span class="icon">💰</span> Transaksi
     </a>
-
     <a href="histori.html" class="menu-karyawan">
-      <span class="icon">🧾</span>
-      Histori Transaksi
+      <span class="icon">🧾</span> Histori Transaksi
     </a>
-
     <a href="regpeg.html" class="menu-owner">
-      <span class="icon">👨‍🍳</span>
-      Pendaftaran Pegawai
+      <span class="icon">👨‍🍳</span> Pendaftaran Pegawai
     </a>
-
     <a href="#">
-      <span class="icon">🖨️</span>
-      Pengaturan Printer
+      <span class="icon">🖨️</span> Pengaturan Printer
     </a>
-
-   <a href="javascript:void(0)" onclick="logout()">
-  <span class="icon">🚪</span>
-  Logout
-</a>
-
+    <a href="javascript:void(0)" onclick="logout()">
+      <span class="icon">🚪</span> Logout
+    </a>
   </div>
 
-  <!-- OVERLAY -->
-
-  <div 
-    class="overlay" 
-    id="overlay"
-    onclick="closeSidebar()"
-  ></div>
-
-  <!-- CONTENT -->
+  <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
   <div class="content">
 
-<!-- QUICK MENU -->
-
-<div class="quick-menu">
-
-  <div 
-    class="quick-btn"
-    onclick="window.location.href='transaksi.html'"
-  >
-
-    <div class="quick-icon">
-      💰
+    <div class="quick-menu">
+      <div class="quick-btn" onclick="window.location.href='transaksi.html'">
+        <div class="quick-icon">💰</div>
+        <span>Transaksi</span>
+      </div>
+      <div class="quick-btn" onclick="window.location.href='pengeluaran.html'">
+        <div class="quick-icon">📊</div>
+        <span>Pengeluaran</span>
+      </div>
+      <div class="quick-btn" onclick="window.location.href='histori.html'">
+        <div class="quick-icon">🧾</div>
+        <span>Histori</span>
+      </div>
     </div>
-
-    <span>
-      Transaksi
-    </span>
-
-  </div>
-
-  <div class="quick-btn"
-    onclick="window.location.href='pengeluaran.html'"
-  >
-
-    <div class="quick-icon">
-      📊
-    </div>
-
-    <span>
-      Pengeluran
-    </span>
-
-  </div>
-
-  <div 
-  class="quick-btn"
-
-    onclick="window.location.href='histori.html'"
-    >
-    <div class="quick-icon">
-      🧾
-    </div>
-
-    <span>
-      Histori
-    </span>
-
-  </div>
-
-</div>
-
-    <!-- OMSET -->
 
     <div class="card">
-
-      <div class="card-title">
-        Pemasukan
-      </div>
-
-      <div class="card-value"id="omsetHariIni">
-        Rp 0
-      </div>
-
-      <div class="small-link"
-        onclick="window.location.href='histori.html'"
-        >
-        Lihat Selengkapnya
-      </div>
-
+      <div class="card-title">Pemasukan</div>
+      <div class="card-value" id="omsetHariIni">Rp 0</div>
+      <div class="small-link" onclick="window.location.href='histori.html'">Lihat Selengkapnya</div>
     </div>
-
-    <!-- GRID -->
 
     <div class="grid">
-
-      <!-- PENGELUARAN -->
-
       <div class="card">
-
-        <div class="card-title">
-          Pengeluaran
-        </div>
-
-        <div class="card-value"id="pengeluaranHariIni">
-          Rp 0
-        </div>
-        <div class="small-link"
-        onclick="window.location.href='pengeluaran.html'"
-        >
-        Selengkapnya
+        <div class="card-title">Pengeluaran</div>
+        <div class="card-value" id="pengeluaranHariIni">Rp 0</div>
+        <div class="small-link" onclick="window.location.href='pengeluaran.html'">Selengkapnya</div>
       </div>
 
-      </div>
-
-       <!-- Total Setelah dikurangi keluar -->
-
       <div class="card">
-
-        <div class="card-title">
-          OMSET HARI INI
-        </div>
-
-        <div class="card-value"id="labaHariIni">
-          Rp 0
+        <div class="card-title">OMSET HARI INI</div>
+        <div class="card-value" id="labaHariIni">Rp 0</div>
+      </div>
     </div>
+
+    <footer>
+      Birawa 2026 | BY P4170
+    </footer>
 
   </div>
 
-  <!-- FOOTER -->
-
-  <footer>
-    Birawa 2026 | BY P4170
-  </footer>
-
   <script>
-if (localStorage.getItem("loggedIn") !== "true") {
-  window.location.href = "login.html";
-}
+    if (localStorage.getItem("loggedIn") !== "true") {
+      window.location.href = "login.html";
+    }
+
     // SIDEBAR
-
     function openSidebar(){
-
-      document
-      .getElementById("sidebar")
-      .classList.add("active");
-
-      document
-      .getElementById("overlay")
-      .classList.add("active");
-
+      document.getElementById("sidebar").classList.add("active");
+      document.getElementById("overlay").classList.add("active");
     }
 
     function closeSidebar(){
-
-      document
-      .getElementById("sidebar")
-      .classList.remove("active");
-
-      document
-      .getElementById("overlay")
-      .classList.remove("active");
-
+      document.getElementById("sidebar").classList.remove("active");
+      document.getElementById("overlay").classList.remove("active");
     }
 
     // USER LOGIN
-
-    const username =
-    localStorage.getItem("username");
-
+    const username = localStorage.getItem("username");
     if(username){
-
-      document
-      .getElementById("profileName")
-      .innerText = username;
-
+      document.getElementById("profileName").innerText = username;
     }
 
     // LOGOUT
-
-   function logout(){
-
-  localStorage.removeItem("loggedIn");
-  localStorage.removeItem("role");
-  localStorage.removeItem("username");
-
-  window.location.replace("login.html");
-
+    function logout(){
+      localStorage.removeItem("loggedIn");
+      localStorage.removeItem("role");
+      localStorage.removeItem("username");
+      window.location.replace("login.html");
     }
-const HISTORY_URL =
-"https://script.google.com/macros/s/AKfycbxpzfOKXJkXqUJbz8b9WeJXJxti5CRSIslQVfVgXviPftSVap8mpqjfuTnZwuz-GOs/exec";
-let omsetHariIni = 0;
-let pengeluaranHariIni = 0;
-async function loadOmsetHariIni(){
 
-  try{
+    const HISTORY_URL = "https://script.google.com/macros/s/AKfycbxpzfOKXJkXqUJbz8b9WeJXJxti5CRSIslQVfVgXviPftSVap8mpqjfuTnZwuz-GOs/exec";
+    let omsetHariIni = 0;
+    let pengeluaranHariIni = 0;
 
-    const res =
-    await fetch(
-      `${HISTORY_URL}?action=getHistory`
-    );
+    async function loadOmsetHariIni(){
+      try{
+        const res = await fetch(`${HISTORY_URL}?action=getHistory`);
+        const data = await res.json();
+        const sekarang = new Date();
+        const hariIni = sekarang.getDate();
+        const bulanIni = sekarang.getMonth();
+        const tahunIni = sekarang.getFullYear();
 
-    const data =
-    await res.json();
+        omsetHariIni = 0;
+        data.forEach(item => {
+          const tgl = new Date(item.tanggal);
+          if(
+            tgl.getDate() === hariIni &&
+            tgl.getMonth() === bulanIni &&
+            tgl.getFullYear() === tahunIni
+          ){
+            omsetHariIni += Number(item.total);
+          }
+        });
 
-    const sekarang =
-    new Date();
-
-    const hariIni =
-    sekarang.getDate();
-
-    const bulanIni =
-    sekarang.getMonth();
-
-    const tahunIni =
-    sekarang.getFullYear();
-
-    omsetHariIni = 0;
-
-    data.forEach(item => {
-
-      const tgl =
-      new Date(item.tanggal);
-
-      if(
-        tgl.getDate() === hariIni &&
-        tgl.getMonth() === bulanIni &&
-        tgl.getFullYear() === tahunIni
-      ){
-
-        omsetHariIni +=
-        Number(item.total);
-
+        document.getElementById("omsetHariIni").innerText = "Rp " + omsetHariIni.toLocaleString("id-ID");
+        hitungLabaHariIni();
+      }catch(err){
+        console.log("Gagal load omset", err);
       }
+    }
 
-    });
+    async function loadPengeluaranHariIni(){
+      try{
+        const res = await fetch(`${HISTORY_URL}?action=getPengeluaran`);
+        const data = await res.json();
+        const sekarang = new Date();
 
-    document
-    .getElementById("omsetHariIni")
-    .innerText =
-    "Rp " +
-    omsetHariIni.toLocaleString("id-ID");
-    hitungLabaHariIni();
+        pengeluaranHariIni = 0;
+        data.forEach(item=>{
+          const tgl = new Date(item.tanggal);
+          if(
+            tgl.getDate() === sekarang.getDate() &&
+            tgl.getMonth() === sekarang.getMonth() &&
+            tgl.getFullYear() === sekarang.getFullYear()
+          ){
+            pengeluaranHariIni += Number(item.jumlah);
+          }
+        });
 
-  }catch(err){
-
-    console.log(
-      "Gagal load omset",
-      err
-    );
-
-  }
-
-}
-async function loadPengeluaranHariIni(){
-
-  try{
-
-    const res =
-    await fetch(
-      `${HISTORY_URL}?action=getPengeluaran`
-    );
-
-    const data =
-    await res.json();
-
-    const sekarang =
-    new Date();
-
-    pengeluaranHariIni = 0;
-
-    data.forEach(item=>{
-
-      const tgl =
-      new Date(item.tanggal);
-
-      if(
-        tgl.getDate() === sekarang.getDate() &&
-        tgl.getMonth() === sekarang.getMonth() &&
-        tgl.getFullYear() === sekarang.getFullYear()
-      ){
-
-        pengeluaranHariIni +=
-        Number(item.jumlah);
-
+        document.getElementById("pengeluaranHariIni").innerText = "Rp " + pengeluaranHariIni.toLocaleString("id-ID");
+        hitungLabaHariIni();
+      }catch(err){
+        console.log(err);
       }
+    }
 
-    });
+    function hitungLabaHariIni(){
+      const laba = omsetHariIni - pengeluaranHariIni;
+      document.getElementById("labaHariIni").innerText = "Rp " + laba.toLocaleString("id-ID");
+    }
 
-    document
-    .getElementById("pengeluaranHariIni")
-    .innerText =
-    "Rp " +
-    pengeluaranHariIni.toLocaleString("id-ID");
+    loadOmsetHariIni();
+    loadPengeluaranHariIni();
 
-    hitungLabaHariIni();
-
-  }catch(err){
-
-    console.log(err);
-
-  }
-
-}
-function hitungLabaHariIni(){
-
-  const laba =
-  omsetHariIni -
-  pengeluaranHariIni;
-
-  document
-  .getElementById("labaHariIni")
-  .innerText =
-  "Rp " +
-  laba.toLocaleString("id-ID");
-
-}
-loadOmsetHariIni();
-loadPengeluaranHariIni();
-const role =
-localStorage.getItem("role");
-
-if(role === "karyawan"){
-
-  document
-  .querySelectorAll(".menu-owner")
-  .forEach(menu=>{
-    menu.style.display = "none";
-  });
-
-}
+    const role = localStorage.getItem("role");
+    if(role === "karyawan"){
+      document.querySelectorAll(".menu-owner").forEach(menu=>{
+        menu.style.display = "none";
+      });
+    }
   </script>
-
 </body>
 </html>
