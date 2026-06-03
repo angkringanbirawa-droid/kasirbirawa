@@ -16,8 +16,8 @@
     body{
       background:#111;
       color:white;
-      /* PERBAIKAN: Padding atas dinamis biar konten gak tenggelam di bawah header */
-      padding: calc(70px + env(safe-area-inset-top, 24px)) 16px 20px 16px;
+      /* PERBAIKAN: Padding atas dinamis mengikuti status bar aman notch HP */
+      padding: calc(75px + env(safe-area-inset-top, 24px)) 16px 20px 16px;
     }
 
     /* HEADER */
@@ -130,9 +130,9 @@
       display:block;
     }
 
-    /* CONTENT */
+    /* CONTENT CONTAINER */
     .container{
-      max-width: 500px;
+      max-width: 550px;
       margin: auto;
     }
 
@@ -141,6 +141,7 @@
       border-radius:18px;
       padding:22px;
       border:1px solid #2a2a2a;
+      margin-bottom: 20px;
     }
 
     h2{
@@ -182,8 +183,6 @@
 
     select.input{
       cursor: pointer;
-      appearance: none;
-      -webkit-appearance: none;
     }
 
     .btn{
@@ -202,6 +201,76 @@
 
     .btn:active{
       transform: scale(0.98);
+    }
+
+    /* STYLING LIST PEGAWAI GAYA BARU */
+    .section-title {
+      font-size: 15px;
+      font-weight: bold;
+      color: #aaa;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .pegawai-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #1c1c1c;
+      padding: 14px 18px;
+      border-radius: 12px;
+      border: 1px solid #2a2a2a;
+      margin-bottom: 10px;
+    }
+
+    .pegawai-info .name {
+      font-weight: bold;
+      font-size: 15px;
+      color: #fff;
+    }
+
+    .pegawai-info .role-badge {
+      display: inline-block;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      margin-top: 4px;
+      font-weight: bold;
+    }
+
+    .role-badge.owner {
+      background: rgba(250, 204, 21, 0.15);
+      color: #facc15;
+    }
+
+    .role-badge.karyawan {
+      background: rgba(0, 230, 118, 0.15);
+      color: #00e676;
+    }
+
+    .btn-delete {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ff5252;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn-delete:hover {
+      background: #ef4444;
+      color: white;
+    }
+
+    .empty {
+      text-align: center;
+      color: #666;
+      font-size: 14px;
+      padding: 20px 0;
     }
   </style>
 </head>
@@ -230,6 +299,7 @@
   <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
   <div class="container">
+    <!-- CARD FORM PENDAFTARAN -->
     <div class="card">
       <h2>DAFTAR PEGAWAI BARU</h2>
       
@@ -251,4 +321,119 @@
         </select>
       </div>
 
-      <button class="btn" onclick="proses
+      <button class="btn" onclick="prosesRegistrasi()">DAFTARKAN PEGAWAI</button>
+    </div>
+
+    <!-- AREA LIST DATA PEGAWAI AKTIF -->
+    <div class="section-title">Daftar Pegawai Aktif</div>
+    <div id="listPegawai">
+      <div class="empty">Memuat data pegawai...</div>
+    </div>
+  </div>
+
+  <script>
+    if (localStorage.getItem("loggedIn") !== "true" || localStorage.getItem("role") !== "owner") {
+      alert("Akses ditolak! Halaman ini khusus Owner.");
+      window.location.href = "data.html";
+    }
+
+    const URL = "https://script.google.com/macros/s/AKfycbxpzfOKXJkXqUJbz8b9WeJXJxti5CRSIslQVfVgXviPftSVap8mpqjfuTnZwuz-GOs/exec";
+
+    function openSidebar(){
+      document.getElementById("sidebar").classList.add("active");
+      document.getElementById("overlay").classList.add("active");
+    }
+
+    function closeSidebar(){
+      document.getElementById("sidebar").classList.remove("active");
+      document.getElementById("overlay").classList.remove("active");
+    }
+
+    const username = localStorage.getItem("username");
+    if(username){
+      document.getElementById("profileName").innerText = username;
+    }
+
+    function logout(){
+      localStorage.clear();
+      window.location.replace("login.html");
+    }
+
+    // FUNGSI REGISTRASI PEGAWAI BARU
+    async function prosesRegistrasi() {
+      const user = document.getElementById("regUsername").value.trim();
+      const pass = document.getElementById("regPassword").value.trim();
+      const role = document.getElementById("regRole").value;
+
+      if(!user || !pass) {
+        alert("Nama dan Password tidak boleh kosong!");
+        return;
+      }
+
+      try {
+        const response = await fetch(`${URL}?action=registerPegawai&username=${encodeURIComponent(user)}&password=${encodeURIComponent(pass)}&role=${role}`);
+        const result = await response.text();
+        alert(result);
+        
+        // Reset form
+        document.getElementById("regUsername").value = "";
+        document.getElementById("regPassword").value = "";
+        
+        // Refresh list
+        loadPegawai();
+      } catch (err) {
+        console.error(err);
+        alert("Gagal mendaftarkan pegawai.");
+      }
+    }
+
+    // FUNGSI AMBIL & TAMPILKAN LIST PEGAWAI
+    async function loadPegawai() {
+      try {
+        const response = await fetch(`${URL}?action=getPegawai`);
+        const data = await response.json();
+        let html = "";
+
+        if(data.length === 0) {
+          html = `<div class="empty">Belum ada data pegawai terdaftar</div>`;
+        } else {
+          data.forEach(pegawai => {
+            // Hilangkan data sensitif password dari display UI demi keamanan
+            html += `
+              <div class="pegawai-item">
+                <div class="pegawai-info">
+                  <div class="name">${pegawai.username}</div>
+                  <div class="role-badge ${pegawai.role}">${pegawai.role.toUpperCase()}</div>
+                </div>
+                <button class="btn-delete" onclick="hapusPegawai('${pegawai.username}')">Hapus</button>
+              </div>
+            `;
+          });
+        }
+        document.getElementById("listPegawai").innerHTML = html;
+      } catch (err) {
+        console.error(err);
+        document.getElementById("listPegawai").innerHTML = `<div class="empty">Gagal memuat list pegawai</div>`;
+      }
+    }
+
+    // FUNGSI HAPUS PEGAWAI
+    async function hapusPegawai(username) {
+      if(!confirm(`Apakah Anda yakin ingin menghapus akun ${username}?`)) return;
+
+      try {
+        const response = await fetch(`${URL}?action=deletePegawai&username=${encodeURIComponent(username)}`);
+        const result = await response.text();
+        alert(result);
+        loadPegawai();
+      } catch (err) {
+        console.error(err);
+        alert("Gagal menghapus pegawai.");
+      }
+    }
+
+    // Jalankan list saat pertama kali halaman dibuka
+    loadPegawai();
+  </script>
+</body>
+</html>
