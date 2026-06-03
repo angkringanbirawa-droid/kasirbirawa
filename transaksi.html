@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Transaksi - BirawaPOS</title>
 
 <style>
@@ -20,10 +20,10 @@ body{
 }
 
 /* HEADER */
-
 .header{
   background:#1b1b1b;
-  padding:18px;
+  /* PERBAIKAN: Gunakan safe-area-inset-top dengan fallback 24px jika tidak disupport */
+  padding: calc(18px + env(safe-area-inset-top, 24px)) 18px 18px 18px;
   display:flex;
   justify-content:space-between;
   align-items:center;
@@ -51,7 +51,6 @@ body{
 }
 
 /* ORDER BUTTON */
-
 .order-btn{
   position:relative;
   font-size:26px;
@@ -62,25 +61,19 @@ body{
   position:absolute;
   top:-6px;
   right:-8px;
-
   width:22px;
   height:22px;
-
   border-radius:50%;
-
   background:red;
   color:white;
-
   font-size:11px;
   font-weight:bold;
-
   display:flex;
   justify-content:center;
   align-items:center;
 }
 
 /* SIDEBAR */
-
 .sidebar{
   width:260px;
   height:100vh;
@@ -90,6 +83,8 @@ body{
   left:-260px;
   transition:0.3s;
   z-index:999;
+  /* PERBAIKAN: Beri padding top di dalam sidebar agar menu pertamanya tidak nabrak */
+  padding-top: env(safe-area-inset-top, 24px);
 }
 
 .sidebar.active{
@@ -109,7 +104,6 @@ body{
 }
 
 /* OVERLAY */
-
 .overlay{
   position:fixed;
   width:100%;
@@ -126,13 +120,11 @@ body{
 }
 
 /* CONTENT */
-
 .container{
   padding:15px;
 }
 
 /* PRODUK */
-
 .produk-grid{
   display:grid;
   grid-template-columns:repeat(2,1fr);
@@ -175,29 +167,21 @@ body{
 }
 
 /* FLOAT CART */
-
 .floating-cart{
   position:fixed;
   right:20px;
   bottom:20px;
-
   width:65px;
   height:65px;
-
   border-radius:50%;
-
   background:#facc15;
   color:#111;
-
   display:flex;
   justify-content:center;
   align-items:center;
-
   font-size:28px;
   cursor:pointer;
-
   z-index:999;
-
   box-shadow:0 5px 20px rgba(0,0,0,0.4);
 }
 
@@ -205,25 +189,19 @@ body{
   position:absolute;
   top:-5px;
   right:-5px;
-
   background:red;
   color:white;
-
   width:24px;
   height:24px;
-
   border-radius:50%;
-
   display:flex;
   justify-content:center;
   align-items:center;
-
   font-size:12px;
   font-weight:bold;
 }
 
 /* MODAL */
-
 .modal{
   position:fixed;
   top:0;
@@ -246,7 +224,6 @@ body{
 }
 
 /* TITLE */
-
 .modal-title{
   font-size:22px;
   color:#facc15;
@@ -255,7 +232,6 @@ body{
 }
 
 /* CART */
-
 .cart-list{
   max-height:300px;
   overflow:auto;
@@ -320,7 +296,6 @@ body{
 }
 
 /* ORDER LIST */
-
 .order-item{
   background:#222;
   padding:15px;
@@ -418,907 +393,350 @@ body{
 </head>
 <body>
 
-<!-- HEADER -->
-
 <div class="header">
-
   <div class="header-left">
-
-    <div 
-      class="menu-btn"
-      onclick="openSidebar()"
-    >
-      ☰
-    </div>
-
-    <div class="title">
-      Transaksi
-    </div>
-
+    <div class="menu-btn" onclick="openSidebar()">☰</div>
+    <div class="title">Transaksi</div>
   </div>
 
-  <div 
-    class="order-btn"
-    onclick="openPesanan()"
-  >
-
+  <div class="order-btn" onclick="openPesanan()">
     📦
-
-    <div class="order-badge" id="orderBadge">
-      0
-    </div>
-
+    <div class="order-badge" id="orderBadge">0</div>
   </div>
-
 </div>
-
-<!-- SIDEBAR -->
 
 <div class="sidebar" id="sidebar">
-
   <a href="data.html">🏠 Dashboard</a>
-  <a href="absensi.html">🕒 Absensi</a>
   <a href="transaksi.html">💰 Transaksi</a>
-  <a href="histori.html">🧾 Histori</a>
-  <a href="#" onclick="logout()">🚪 Logout</a>
-
+  <a href="input.html">🍜 Kelola Produk</a>
 </div>
 
-<div 
-  class="overlay"
-  id="overlay"
-  onclick="closeSidebar()"
-></div>
-
-<!-- CONTENT -->
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
 <div class="container">
-
   <div class="produk-grid" id="produkContainer">
-
-    <div class="empty">
-      Loading produk...
-    </div>
-
+    <div class="empty">Loading produk...</div>
   </div>
-
 </div>
 
-<!-- FLOAT CART -->
-
-<div 
-  class="floating-cart"
-  onclick="openCart()"
->
-
+<div class="floating-cart" onclick="openCart()">
   🛒
-
-  <div class="cart-badge" id="cartBadge">
-    0
-  </div>
-
+  <div class="cart-badge" id="cartBadge">0</div>
 </div>
-
-<!-- CART -->
 
 <div class="modal" id="cartModal">
-
   <div class="modal-content">
-
-    <div class="modal-title">
-      Keranjang
-    </div>
-
+    <div class="modal-title">Keranjang</div>
     <div class="cart-list" id="cartList"></div>
-
-    <div class="total" id="totalHarga">
-      Total : Rp 0
-    </div>
-
-    <button
-      class="pay-btn"
-      onclick="openPayment()"
-    >
-      BAYAR SEKARANG
-    </button>
-
-    <button
-      class="save-btn"
-      onclick="openSaveOrder()"
-    >
-      SIMPAN PESANAN
-    </button>
-
+    <div class="total" id="totalHarga">Total : Rp 0</div>
+    <button class="pay-btn" onclick="openPayment()">BAYAR SEKARANG</button>
+    <button class="save-btn" onclick="openSaveOrder()">SIMPAN PESANAN</button>
   </div>
-
 </div>
-
-<!-- SAVE ORDER -->
 
 <div class="modal" id="saveModal">
-
   <div class="modal-content">
-
-    <div class="modal-title">
-      Simpan Pesanan
-    </div>
-
-    <input
-      type="text"
-      id="namaPesanan"
-      class="input-name"
-      placeholder="Nama pelanggan / meja"
-    >
-
-    <button
-      class="pay-btn"
-      onclick="simpanPesanan()"
-    >
-      SIMPAN
-    </button>
-
+    <div class="modal-title">Simpan Pesanan</div>
+    <input type="text" id="namaPesanan" class="input-name" placeholder="Nama pelanggan / meja">
+    <button class="pay-btn" onclick="simpanPesanan()">SIMPAN</button>
   </div>
-
 </div>
-
-<!-- PESANAN -->
 
 <div class="modal" id="pesananModal">
-
   <div class="modal-content">
-
-    <div class="modal-title">
-      Daftar Pesanan
-    </div>
-
+    <div class="modal-title">Daftar Pesanan</div>
     <div class="search-pesanan">
-
-      <input
-        type="text"
-        id="searchPesanan"
-        placeholder="Cari pesanan..."
-        onkeyup="filterPesanan()"
-      >
-
-      <button onclick="filterPesanan()">
-        🔍
-      </button>
-
+      <input type="text" id="searchPesanan" placeholder="Cari pesanan..." onkeyup="filterPesanan()">
+      <button onclick="filterPesanan()">🔍</button>
     </div>
-
     <div id="pesananList"></div>
-
   </div>
-
 </div>
-
-<!-- PAYMENT -->
 
 <div class="modal" id="paymentModal">
-
   <div class="modal-content">
-
-    <div class="modal-title">
-      Pilih Pembayaran
-    </div>
-
-    <button
-      class="method-btn"
-      onclick="bayar('QRIS')"
-    >
-      QRIS
-    </button>
-
-    <button
-      class="method-btn"
-      onclick="bayar('Cash')"
-    >
-      CASH
-    </button>
-
+    <div class="modal-title">Pilih Pembayaran</div>
+    <button class="method-btn" onclick="bayar('QRIS')">QRIS</button>
+    <button class="method-btn" onclick="bayar('Cash')">CASH</button>
   </div>
-
 </div>
 
-<!-- STRUK -->
-
 <div class="modal" id="strukModal">
-
   <div class="modal-content">
-
-    <div class="modal-title">
-      Cetak Struk?
-    </div>
-
-    <button
-      class="struk-btn yes"
-      onclick="cetakStruk()"
-    >
-      YA
-    </button>
-
-    <button
-      class="struk-btn no"
-      onclick="selesaiTransaksi()"
-    >
-      TIDAK
-    </button>
-
+    <div class="modal-title">Cetak Struk?</div>
+    <button class="struk-btn yes" onclick="cetakStruk()">YA</button>
+    <button class="struk-btn no" onclick="selesaiTransaksi()">TIDAK</button>
   </div>
-
 </div>
 
 
 <script>
-  if (localStorage.getItem("loggedIn") !== "true") {
+if (localStorage.getItem("loggedIn") !== "true") {
   window.location.href = "login.html";
 }
 
-const PRODUCT_URL =
-"https://script.google.com/macros/s/AKfycbwN6qlNF9VBj7ysb79rVd_AkNSg2jYC22xYwGR6fxLNlur20cu1AYKtS8j0xQb4yNJX/exec";
-
-const TRANSACTION_URL =
-"https://script.google.com/macros/s/AKfycbxpzfOKXJkXqUJbz8b9WeJXJxti5CRSIslQVfVgXviPftSVap8mpqjfuTnZwuz-GOs/exec";
+const PRODUCT_URL = "https://script.google.com/macros/s/AKfycbwN6qlNF9VBj7ysb79rVd_AkNSg2jYC22xYwGR6fxLNlur20cu1AYKtS8j0xQb4yNJX/exec";
+const TRANSACTION_URL = "https://script.google.com/macros/s/AKfycbxpzfOKXJkXqUJbz8b9WeJXJxti5CRSIslQVfVgXviPftSVap8mpqjfuTnZwuz-GOs/exec";
 
 let produkData = [];
-
-let cart =
-JSON.parse(localStorage.getItem("cart")) || [];
-
-let savedOrders =
-JSON.parse(localStorage.getItem("savedOrders")) || [];
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+let savedOrders = JSON.parse(localStorage.getItem("savedOrders")) || [];
 
 function saveLocal(){
-
-  localStorage.setItem(
-    "cart",
-    JSON.stringify(cart)
-  );
-
-  localStorage.setItem(
-    "savedOrders",
-    JSON.stringify(savedOrders)
-  );
-
+  localStorage.setItem("cart", JSON.stringify(cart));
+  localStorage.setItem("savedOrders", JSON.stringify(savedOrders));
 }
 
 /* SIDEBAR */
-
 function openSidebar(){
-
-  document
-  .getElementById("sidebar")
-  .classList.add("active");
-
-  document
-  .getElementById("overlay")
-  .classList.add("active");
-
+  document.getElementById("sidebar").classList.add("active");
+  document.getElementById("overlay").classList.add("active");
 }
 
 function closeSidebar(){
-
-  document
-  .getElementById("sidebar")
-  .classList.remove("active");
-
-  document
-  .getElementById("overlay")
-  .classList.remove("active");
-
+  document.getElementById("sidebar").classList.remove("active");
+  document.getElementById("overlay").classList.remove("active");
 }
 
 /* LOAD PRODUK */
-
 async function loadProduk(){
-
   try{
-
-    const response =
-    await fetch(
-      `${PRODUCT_URL}?action=getProducts&t=${Date.now()}`
-    );
-
-    const data =
-    await response.json();
-
+    const response = await fetch(`${PRODUCT_URL}?action=getProducts&t=${Date.now()}`);
+    const data = await response.json();
     produkData = data;
-
     renderProduk(data);
-
   }catch(err){
-
     console.log(err);
-
-    document
-    .getElementById("produkContainer")
-    .innerHTML =
-    `
-      <div class="empty">
-        Gagal load produk
-      </div>
+    document.getElementById("produkContainer").innerHTML = `
+      <div class="empty">Gagal load produk</div>
     `;
-
   }
-
 }
 
 function renderProduk(data){
-
-  const container =
-  document.getElementById("produkContainer");
-
+  const container = document.getElementById("produkContainer");
   let html = "";
-
   if(!data || data.length === 0){
-
-    container.innerHTML =
-    `
-      <div class="empty">
-        Produk kosong
-      </div>
+    container.innerHTML = `
+      <div class="empty">Produk kosong</div>
     `;
-
     return;
-
   }
-
   data.forEach(item => {
-
     html += `
-
-      <div
-        class="produk-card"
-        onclick='tambahCart(
-          "${item.nama_barang}",
-          "${item.harga}"
-        )'
-      >
-
-        <img
-          src="${item.url_foto}"
-          class="produk-img"
-          onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'"
-        >
-
+      <div class="produk-card" onclick='tambahCart("${item.nama_barang}", "${item.harga}")'>
+        <img src="${item.url_foto}" class="produk-img" onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
         <div class="produk-info">
-
-          <div class="produk-nama">
-            ${item.nama_barang}
-          </div>
-
-          <div class="produk-harga">
-            Rp ${Number(item.harga).toLocaleString("id-ID")}
-          </div>
-
-          <div class="produk-stok">
-            Stok : ${item.stok}
-          </div>
-
+          <div class="produk-nama">${item.nama_barang}</div>
+          <div class="produk-harga">Rp ${Number(item.harga).toLocaleString("id-ID")}</div>
+          <div class="produk-stok">Stok : ${item.stok}</div>
         </div>
-
       </div>
-
     `;
-
   });
-
   container.innerHTML = html;
-
 }
 
 /* CART */
-
 function tambahCart(nama,harga){
-
-  const existing =
-  cart.find(item =>
-    item.nama === nama
-  );
-
+  const existing = cart.find(item => item.nama === nama);
   if(existing){
-
     existing.qty++;
-
   }else{
-
-    cart.push({
-      nama,
-      harga:Number(harga),
-      qty:1
-    });
-
+    cart.push({ nama, harga:Number(harga), qty:1 });
   }
-
   renderCart();
-
   saveLocal();
-
 }
 
 function renderCart(){
-
-  const cartList =
-  document.getElementById("cartList");
-
+  const cartList = document.getElementById("cartList");
   let total = 0;
   let totalItem = 0;
   let html = "";
-
   cart.forEach((item,index)=>{
-
-    const subtotal =
-    item.harga * item.qty;
-
+    const subtotal = item.harga * item.qty;
     total += subtotal;
     totalItem += item.qty;
-
     html += `
-
       <div class="cart-item">
-
         <div>
-
-          <div>
-            ${item.nama}
-          </div>
-
-          <small>
-            Rp ${subtotal.toLocaleString("id-ID")}
-          </small>
-
+          <div>${item.nama}</div>
+          <small>Rp ${subtotal.toLocaleString("id-ID")}</small>
         </div>
-
         <div class="qty-box">
-
-          <button
-            class="qty-btn"
-            onclick="kurangQty(${index})"
-          >
-            -
-          </button>
-
-          <div>
-            ${item.qty}
-          </div>
-
-          <button
-            class="qty-btn"
-            onclick="tambahQty(${index})"
-          >
-            +
-          </button>
-
+          <button class="qty-btn" onclick="kurangQty(${index})">-</button>
+          <div>${item.qty}</div>
+          <button class="qty-btn" onclick="tambahQty(${index})">+</button>
         </div>
-
       </div>
-
     `;
-
   });
-
   if(cart.length === 0){
-
-    html = `
-      <div class="empty">
-        Belum ada produk
-      </div>
-    `;
-
+    html = `<div class="empty">Belum ada produk</div>`;
   }
-
   cartList.innerHTML = html;
-
-  document
-  .getElementById("cartBadge")
-  .innerText = totalItem;
-
-  document
-  .getElementById("totalHarga")
-  .innerText =
-  "Total : Rp " +
-  total.toLocaleString("id-ID");
-
+  document.getElementById("cartBadge").innerText = totalItem;
+  document.getElementById("totalHarga").innerText = "Total : Rp " + total.toLocaleString("id-ID");
 }
 
 function tambahQty(index){
-
   cart[index].qty++;
-
   renderCart();
-
   saveLocal();
-
 }
 
 function kurangQty(index){
-
   cart[index].qty--;
-
   if(cart[index].qty <= 0){
-
     cart.splice(index,1);
-
   }
-
   renderCart();
-
   saveLocal();
-
 }
 
 function openCart(){
-
-  document
-  .getElementById("cartModal")
-  .style.display = "flex";
-
+  document.getElementById("cartModal").style.display = "flex";
 }
 
 function openPayment(){
-
   if(cart.length === 0){
-
     alert("Keranjang kosong");
-
     return;
-
   }
-
-  document
-  .getElementById("cartModal")
-  .style.display = "none";
-
-  document
-  .getElementById("paymentModal")
-  .style.display = "flex";
-
+  document.getElementById("cartModal").style.display = "none";
+  document.getElementById("paymentModal").style.display = "flex";
 }
 
 async function bayar(method){
-
   try{
-
     let total = 0;
-
-    cart.forEach(item => {
-
-      total +=
-      item.harga * item.qty;
-
-    });
-    const response =
-    await fetch(
-
-      `${TRANSACTION_URL}?action=saveTransaction&method=${method}&total=${total}&items=${encodeURIComponent(JSON.stringify(cart))}`
-
-    );
-
-    const result =
-    await response.text();
-
+    cart.forEach(item => { total += item.harga * item.qty; });
+    const response = await fetch(`${TRANSACTION_URL}?action=saveTransaction&method=${method}&total=${total}&items=${encodeURIComponent(JSON.stringify(cart))}`);
+    const result = await response.text();
     console.log(result);
-
-    document
-    .getElementById("paymentModal")
-    .style.display = "none";
-
-    document
-    .getElementById("strukModal")
-    .style.display = "flex";
-
+    document.getElementById("paymentModal").style.display = "none";
+    document.getElementById("strukModal").style.display = "flex";
     cart = [];
-
     saveLocal();
-
     renderCart();
-
     loadProduk();
-
   }catch(err){
-
     alert("Gagal simpan transaksi");
-
     console.log(err);
-
   }
-
 }
 
 function cetakStruk(){
-
   window.print();
-
   selesaiTransaksi();
-
 }
 
 function selesaiTransaksi(){
-
-  document
-  .getElementById("strukModal")
-  .style.display = "none";
-
+  document.getElementById("strukModal").style.display = "none";
   cart = [];
-
   renderCart();
-
   saveLocal();
-
 }
 
 /* SAVE ORDER */
-
 function openSaveOrder(){
-
   if(cart.length === 0){
-
     alert("Keranjang kosong");
-
     return;
-
   }
-
-  document
-  .getElementById("saveModal")
-  .style.display = "flex";
-
+  document.getElementById("saveModal").style.display = "flex";
 }
 
 function simpanPesanan(){
-
-  const nama =
-  document
-  .getElementById("namaPesanan")
-  .value;
-
+  const nama = document.getElementById("namaPesanan").value;
   if(!nama){
-
     alert("Isi nama pesanan");
-
     return;
-
   }
-
-  /* simpan order */
-
-  savedOrders.push({
-
-    nama:nama,
-    items:[...cart]
-
-  });
-
-  /* reset keranjang */
-
+  savedOrders.push({ nama:nama, items:[...cart] });
   cart = [];
-
-  /* simpan local */
-
   saveLocal();
-
-  /* update UI */
-
   renderCart();
-
   updateOrderBadge();
-
-  /* tutup modal */
-
-  document
-  .getElementById("saveModal")
-  .style.display = "none";
-
-  document
-  .getElementById("cartModal")
-  .style.display = "none";
-
-  /* reset input */
-
-  document
-  .getElementById("namaPesanan")
-  .value = "";
-
+  document.getElementById("saveModal").style.display = "none";
+  document.getElementById("cartModal").style.display = "none";
+  document.getElementById("namaPesanan").value = "";
   alert("Pesanan disimpan");
-
 }
 
 function updateOrderBadge(){
-
-  document
-  .getElementById("orderBadge")
-  .innerText =
-  savedOrders.length;
-
+  document.getElementById("orderBadge").innerText = savedOrders.length;
 }
 
 /* PESANAN */
-
 function openPesanan(){
-
-  document
-  .getElementById("pesananModal")
-  .style.display = "flex";
-
+  document.getElementById("pesananModal").style.display = "flex";
   renderPesanan();
-
 }
 
 function filterPesanan(){
-
-  const keyword =
-  document
-  .getElementById("searchPesanan")
-  .value
-  .toLowerCase();
-
-  const filtered =
-  savedOrders.filter(order =>
-    order.nama
-    .toLowerCase()
-    .includes(keyword)
-  );
-
+  const keyword = document.getElementById("searchPesanan").value.toLowerCase();
+  const filtered = savedOrders.filter(order => order.nama.toLowerCase().includes(keyword));
   renderPesanan(filtered);
-
 }
 
 function renderPesanan(data = savedOrders){
-
-  const container =
-  document.getElementById("pesananList");
-
+  const container = document.getElementById("pesananList");
   let html = "";
-
   if(data.length === 0){
-
-    html = `
-      <div class="empty">
-        Pesanan tidak ditemukan
-      </div>
-    `;
-
+    html = `<div class="empty">Pesanan tidak ditemukan</div>`;
     container.innerHTML = html;
-
     return;
-
   }
-
   data.forEach((order)=>{
-
     let total = 0;
-
-    order.items.forEach(item=>{
-
-      total +=
-      item.harga * item.qty;
-
-    });
-
+    order.items.forEach(item=>{ total += item.harga * item.qty; });
     html += `
-
       <div class="order-item">
-
-        <div class="order-name">
-          ${order.nama}
+        <div class="order-name">${order.nama}</div>
+        <div class="order-total">Total : Rp ${total.toLocaleString("id-ID")}</div>
+        <div style="display:flex; gap:10px; margin-top:15px;">
+          <button onclick="loadPesanan(${savedOrders.indexOf(order)})" style="flex:1; padding:12px; border:none; border-radius:12px; background:#facc15; color:#111; font-weight:bold; cursor:pointer;">Bayar</button>
+          <button onclick="hapusPesanan(${savedOrders.indexOf(order)})" style="flex:1; padding:12px; border:none; border-radius:12px; background:#5a1d1d; color:white; font-weight:bold; cursor:pointer;">Hapus</button>
         </div>
-
-        <div class="order-total">
-          Total :
-          Rp ${total.toLocaleString("id-ID")}
-        </div>
-
-        <div style="
-          display:flex;
-          gap:10px;
-          margin-top:15px;
-        ">
-
-          <button
-            onclick="loadPesanan(${savedOrders.indexOf(order)})"
-            style="
-              flex:1;
-              padding:12px;
-              border:none;
-              border-radius:12px;
-              background:#facc15;
-              color:#111;
-              font-weight:bold;
-              cursor:pointer;
-            "
-          >
-            Bayar
-          </button>
-
-          <button
-            onclick="hapusPesanan(${savedOrders.indexOf(order)})"
-            style="
-              flex:1;
-              padding:12px;
-              border:none;
-              border-radius:12px;
-              background:#5a1d1d;
-              color:white;
-              font-weight:bold;
-              cursor:pointer;
-            "
-          >
-            Hapus
-          </button>
-
-        </div>
-
       </div>
-
     `;
-
   });
-
   container.innerHTML = html;
-
 }
 
 function loadPesanan(index){
-
   cart = [...savedOrders[index].items];
-
   savedOrders.splice(index,1);
-
   updateOrderBadge();
-
   renderCart();
-
   renderPesanan();
-
   saveLocal();
-
-  document
-  .getElementById("pesananModal")
-  .style.display = "none";
-
+  document.getElementById("pesananModal").style.display = "none";
   openCart();
-
 }
 
 function hapusPesanan(index){
-
-  const yakin =
-  confirm("Hapus pesanan ini?");
-
+  const yakin = confirm("Hapus pesanan ini?");
   if(!yakin) return;
-
   savedOrders.splice(index,1);
-
   updateOrderBadge();
-
   renderPesanan();
-
   saveLocal();
-
 }
 
 loadProduk();
-
 renderCart();
-
 updateOrderBadge();
 
 document.querySelectorAll(".modal").forEach(modal => {
-
   modal.addEventListener("click", function(e){
-
     if(e.target === modal){
-
       modal.style.display = "none";
-
     }
-
   });
-
 });
-
 </script>
-
-
 </body>
 </html>
