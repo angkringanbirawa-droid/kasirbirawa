@@ -177,13 +177,30 @@ button:hover{
   border: 5px solid #222;
   border-top: 5px solid #facc15;
   border-radius: 50%;
-  
-  /* Kunci posisi spinner tepat di tengah container */
   margin: auto; 
   
-  /* Pastikan tidak mewarisi animasi atau pergeseran dari box login */
-  transform: translate(0, 0); 
+  /* FORCE HARDWARE ACCELERATION (Mantra biar WebView wajib muter) */
+  -webkit-transform: translate3d(0,0,0);
+  transform: translate3d(0,0,0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-perspective: 1000;
+  perspective: 1000;
+
+  /* Jalankan animasi dengan akselerasi penuh */
+  -webkit-animation: spin 1s linear infinite;
   animation: spin 1s linear infinite;
+}
+
+/* Biar kompatibel dengan Webview versi lama dan baru, bikin dua versi keyframes */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 @keyframes spin {
