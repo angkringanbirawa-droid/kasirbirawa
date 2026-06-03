@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Absensi Pegawai</title>
 
 <style>
@@ -17,18 +17,53 @@
 body{
   background:#111;
   color:white;
-  padding:70px 20px 20px 20px;
+  /* PERBAIKAN: Padding disesuaikan dinamis mengikuti tinggi header baru agar konten tidak tertutup */
+  padding: calc(65px + env(safe-area-inset-top, 24px)) 20px 20px 20px;
 }
 
-/* MENU BUTTON */
+/* HEADER (Disamakan dengan file lain agar konsisten & support status bar) */
+.header{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  z-index:1000;
+  background:#1b1b1b;
+  padding: calc(15px + env(safe-area-inset-top, 24px)) 20px 15px 20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:1px solid #2a2a2a;
+}
 
 .menu-btn{
-  position:fixed;
-  top:50px;
-  left:15px;
+  font-size:28px;
+  cursor:pointer;
 }
 
-/* SIDEBAR */
+.title{
+  color:#facc15;
+  font-weight:bold;
+  font-size:20px;
+}
+
+/* SIDEBAR (Disamakan lebarnya menjadi 260px dan diberi pengaman status bar) */
+.sidebar{
+  position:fixed;
+  top:0;
+  left:-260px; /* Diubah dari -250px */
+  width:260px; /* Diubah dari 220px agar ukurannya seragam dengan halaman lain */
+  height:100vh;
+  background:#1c1c1c;
+  padding-top: calc(20px + env(safe-area-inset-top, 24px));
+  transition:0.3s;
+  z-index:9999;
+  border-right:1px solid #333;
+}
+
+.sidebar.active{
+  left:0;
+}
 
 .sidebar a{
   display:block;
@@ -38,27 +73,28 @@ body{
   border-bottom:1px solid #2a2a2a;
 }
 
-.sidebar.active{
-  left:0;
+.sidebar a:hover{
+  background:#2a2a2a;
 }
 
-.sidebar{
+/* OVERLAY */
+.overlay{
   position:fixed;
-  top:0;
-  left:-250px;
-  width:220px;
-  height:100vh;
-  background:#1d1d1d;
-  padding-top:70px;
-  transition:0.3s;
-  z-index:9998;
-  border-right:1px solid #333;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  display:none;
+  z-index:998;
 }
 
+.overlay.active{
+  display:block;
+}
+
+/* CONTENT */
 .container{
   max-width:550px;
   margin:auto;
-  margin-top:40px;
+  margin-top:20px;
 }
 
 .card{
@@ -141,95 +177,41 @@ select{
   color:white;
   outline:none;
 }
-.overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.5);
-  display:none;
-  z-index:998;
-}
-
-.overlay.active{
-  display:block;
-}
 
 </style>
 </head>
 <body>
 
-<!-- MENU BUTTON -->
-
-<div class="menu-btn" onclick="toggleSidebar()">
-  ☰
+<div class="header">
+  <div class="menu-btn" onclick="toggleSidebar()">☰</div>
+  <div class="title" id="pageTitle">Absensi</div>
+  <div></div>
 </div>
-
-<!-- SIDEBAR -->
 
 <div class="sidebar" id="sidebar">
-
-  <!-- MENU -->
-      <a href="data.html">
-      <span class="icon">🏠</span>
-      Dashboard
-      </a>
-    <a href="absensi.html">
-      <span class="icon">🕒</span>
-      Absensi
-    </a>
-  
-    <a href="transaksi.html" class="menu-karyawan">
-      <span class="icon">💰</span>
-      Transaksi
-    </a>
-
-    <a href="histori.html" class="menu-karyawan">
-      <span class="icon">🧾</span>
-      Histori Transaksi
-    </a>
-  
-    <a href="#">
-      <span class="icon">🖨️</span>
-      Pengaturan Printer
-    </a>
-
-   <a href="javascript:void(0)" onclick="logout()">
-  <span class="icon">🚪</span>
-  Logout
-</a>
-
+  <a href="data.html"><span class="icon">🏠</span> Dashboard</a>
+  <a href="absensi.html"><span class="icon">🕒</span> Absensi</a>
+  <a href="transaksi.html" class="menu-karyawan"><span class="icon">💰</span> Transaksi</a>
+  <a href="histori.html" class="menu-karyawan"><span class="icon">🧾</span> Histori Transaksi</a>
+  <a href="#"><span class="icon">🖨️</span> Pengaturan Printer</a>
+  <a href="javascript:void(0)" onclick="logout()"><span class="icon">🚪</span> Logout</a>
 </div>
-<div <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
 <div class="container">
-
   <div class="card">
+    <h2 id="judul">ABSENSI</h2>
 
-    <h2 id="judul">
-      ABSENSI
-    </h2>
-
-    <!-- KARYAWAN -->
     <div id="karyawanBox" style="display:none;">
-
-      <button onclick="absenMasuk()">
-        ABSEN MASUK
-      </button>
-
+      <button onclick="absenMasuk()">ABSEN MASUK</button>
       <div class="info" id="infoAbsen"></div>
-
     </div>
 
-    <!-- OWNER -->
     <div id="ownerBox" style="display:none;">
-
-      <!-- FILTER -->
       <div class="filter-box">
-
         <select id="filterBulan" onchange="filterAbsensi()">
-
-          <option value="">
-            Semua Bulan
-          </option>
-
+          <option value="">Semua Bulan</option>
           <option value="1">Januari</option>
           <option value="2">Februari</option>
           <option value="3">Maret</option>
@@ -242,324 +224,160 @@ select{
           <option value="10">Oktober</option>
           <option value="11">November</option>
           <option value="12">Desember</option>
-
         </select>
 
         <select id="filterTahun" onchange="filterAbsensi()">
-
-          <option value="">
-            Semua Tahun
-          </option>
-
+          <option value="">Semua Tahun</option>
         </select>
-
       </div>
 
       <div class="list" id="listAbsensi"></div>
-
     </div>
-
   </div>
-
 </div>
 
 <script>
-
-const URL =
-"https://script.google.com/macros/s/AKfycbzdiABCZIRA7mWd6zx1vSFmnFEK6vm4polW3-hzHlilfeagTnN8V7yf9UO-BdCOKDUb/exec";
-
-const role =
-localStorage.getItem("role");
-
+const URL = "https://script.google.com/macros/s/AKfycbzdiABCZIRA7mWd6zx1vSFmnFEK6vm4polW3-hzHlilfeagTnN8V7yf9UO-BdCOKDUb/exec";
+const role = localStorage.getItem("role");
 let allData = [];
-
 
 // =========================
 // SIDEBAR
 // =========================
-
 function toggleSidebar(){
-
-  document
-  .getElementById("sidebar")
-  .classList.add("active");
-
-  document
-  .getElementById("overlay")
-  .classList.add("active");
-
+  document.getElementById("sidebar").classList.add("active");
+  document.getElementById("overlay").classList.add("active");
 }
 
 function closeSidebar(){
-
-  document
-  .getElementById("sidebar")
-  .classList.remove("active");
-
-  document
-  .getElementById("overlay")
-  .classList.remove("active");
-
+  document.getElementById("sidebar").classList.remove("active");
+  document.getElementById("overlay").classList.remove("active");
 }
 
 // =========================
 // ROLE
 // =========================
-
 if(role === "owner"){
-
-  document
-  .getElementById("judul")
-  .innerText = "DAFTAR ABSENSI";
-
-  document
-  .getElementById("ownerBox")
-  .style.display = "block";
-
+  document.getElementById("judul").innerText = "DAFTAR ABSENSI";
+  document.getElementById("pageTitle").innerText = "Daftar Absen";
+  document.getElementById("ownerBox").style.display = "block";
   generateTahun();
-
   loadAbsensi();
-
 }else{
-
-  document
-  .getElementById("judul")
-  .innerText = "ABSENSI KARYAWAN";
-
-  document
-  .getElementById("karyawanBox")
-  .style.display = "block";
-
+  document.getElementById("judul").innerText = "ABSENSI KARYAWAN";
+  document.getElementById("pageTitle").innerText = "Absen Karyawan";
+  document.getElementById("karyawanBox").style.display = "block";
 }
-
 
 // =========================
 // GENERATE TAHUN
 // =========================
-
 function generateTahun(){
-
-  const tahunSelect =
-  document.getElementById("filterTahun");
-
+  const tahunSelect = document.getElementById("filterTahun");
   for(let i = 2030; i >= 2025; i--){
-
     tahunSelect.innerHTML += `
-      <option value="${i}">
-        ${i}
-      </option>
+      <option value="${i}">${i}</option>
     `;
-
   }
-
 }
-
 
 // =========================
 // ABSEN
 // =========================
-
 async function absenMasuk(){
-
-  const nama =
-  localStorage.getItem("username");
-
+  const nama = localStorage.getItem("username");
   if(!nama){
-
     alert("Login dulu");
-
     return;
-
   }
-
   try{
-
-    const response =
-    await fetch(
-      `${URL}?action=absen&nama=${encodeURIComponent(nama)}`
-    );
-
-    const result =
-    await response.text();
-
-    document
-    .getElementById("infoAbsen")
-    .innerText = result;
-
+    const response = await fetch(`${URL}?action=absen&nama=${encodeURIComponent(nama)}`);
+    const result = await response.text();
+    document.getElementById("infoAbsen").innerText = result;
   }catch(error){
-
-    document
-    .getElementById("infoAbsen")
-    .innerText = "Server error";
-
+    document.getElementById("infoAbsen").innerText = "Server error";
   }
-
 }
-
 
 // =========================
 // LOAD ABSENSI
 // =========================
-
 async function loadAbsensi(){
-
   try{
-
-    const response =
-    await fetch(
-      `${URL}?action=getAbsensi`
-    );
-
-    const data =
-    await response.json();
-
+    const response = await fetch(`${URL}?action=getAbsensi`);
+    const data = await response.json();
     allData = data;
-
     renderAbsensi(allData);
-
   }catch(error){
-
-    document
-    .getElementById("listAbsensi")
-    .innerHTML =
-    "<div class='empty'>Gagal load data</div>";
-
+    document.getElementById("listAbsensi").innerHTML = "<div class='empty'>Gagal load data</div>";
   }
-
 }
-
 
 // =========================
 // FILTER
 // =========================
-
 function filterAbsensi(){
+  const bulan = document.getElementById("filterBulan").value;
+  const tahun = document.getElementById("filterTahun").value;
 
-  const bulan =
-  document.getElementById("filterBulan").value;
+  const filtered = allData.filter(item => {
+    const date = new Date(item.tanggal);
+    const itemBulan = date.getMonth() + 1;
+    const itemTahun = date.getFullYear();
 
-  const tahun =
-  document.getElementById("filterTahun").value;
-
-  const filtered =
-  allData.filter(item => {
-
-    const date =
-    new Date(item.tanggal);
-
-    const itemBulan =
-    date.getMonth() + 1;
-
-    const itemTahun =
-    date.getFullYear();
-
-    const cocokBulan =
-    bulan == "" || itemBulan == bulan;
-
-    const cocokTahun =
-    tahun == "" || itemTahun == tahun;
+    const cocokBulan = bulan == "" || itemBulan == bulan;
+    const cocokTahun = tahun == "" || itemTahun == tahun;
 
     return cocokBulan && cocokTahun;
-
   });
-
   renderAbsensi(filtered);
-
 }
-
 
 // =========================
 // RENDER ABSENSI
 // =========================
-
 function renderAbsensi(data){
-
   let html = "";
-
   if(data.length === 0){
-
-    html = `
-      <div class="empty">
-        Data tidak ditemukan
-      </div>
-    `;
-
+    html = `<div class="empty">Data tidak ditemukan</div>`;
   }else{
-
     data.slice().reverse().forEach(item => {
-
       html += `
-
         <div class="item">
-
-          <div class="nama">
-            ${item.nama}
-          </div>
-
-          <div class="detail">
-            📅 ${formatTanggal(item.tanggal)}
-          </div>
-
-          <div class="detail">
-            🕒 ${formatJam(item.jam)}
-          </div>
-
+          <div class="nama">${item.nama}</div>
+          <div class="detail">📅 ${formatTanggal(item.tanggal)}</div>
+          <div class="detail">🕒 ${formatJam(item.jam)}</div>
         </div>
-
       `;
-
     });
-
   }
-
-  document
-  .getElementById("listAbsensi")
-  .innerHTML = html;
-
+  document.getElementById("listAbsensi").innerHTML = html;
 }
-
 
 // =========================
 // FORMAT TANGGAL
 // =========================
-
 function formatTanggal(tanggal){
-
-  const date =
-  new Date(tanggal);
-
-  return date.toLocaleDateString(
-    "id-ID",
-    {
-      day:"numeric",
-      month:"long",
-      year:"numeric"
-    }
-  );
-
+  const date = new Date(tanggal);
+  return date.toLocaleDateString("id-ID", {
+    day:"numeric", month:"long", year:"numeric"
+  });
 }
-
 
 // =========================
 // FORMAT JAM
 // =========================
-
 function formatJam(jam){
-
-  const date =
-  new Date(jam);
-
-  return date.toLocaleTimeString(
-    "id-ID",
-    {
-      hour:"2-digit",
-      minute:"2-digit"
-    }
-  );
-
+  const date = new Date(jam);
+  return date.toLocaleTimeString("id-ID", {
+    hour:"2-digit", minute:"2-digit"
+  });
 }
 
+function logout(){
+  localStorage.clear();
+  window.location.href = "login.html";
+}
 </script>
-
 </body>
 </html>
