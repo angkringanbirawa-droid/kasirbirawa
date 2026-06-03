@@ -219,6 +219,9 @@ body{
   background:#1d1d1d;
   border-radius:20px;
   padding:20px;
+  max-height: 85vh; /* Membatasi tinggi maksimal isi modal di layar HP */
+  display: flex;
+  flex-direction: column;
 }
 
 /* TITLE */
@@ -227,6 +230,7 @@ body{
   color:#facc15;
   margin-bottom:20px;
   text-align:center;
+  flex-shrink: 0;
 }
 
 /* CART */
@@ -280,6 +284,7 @@ body{
   font-weight:bold;
   cursor:pointer;
   margin-bottom:10px;
+  flex-shrink: 0;
 }
 
 .save-btn{
@@ -291,9 +296,16 @@ body{
   color:white;
   font-size:15px;
   cursor:pointer;
+  flex-shrink: 0;
 }
 
-/* ORDER LIST */
+/* ORDER LIST (FIXED SCROLL) */
+#pesananList {
+  max-height: 50vh; /* Membatasi tinggi daftar pesanan gantung */
+  overflow-y: auto; /* Memunculkan scroll-bar jika item meluap banyak */
+  padding-right: 4px;
+}
+
 .order-item{
   background:#222;
   padding:15px;
@@ -327,6 +339,7 @@ body{
   color:white;
   margin-bottom:15px;
   outline:none;
+  flex-shrink: 0;
 }
 
 .method-btn{
@@ -365,6 +378,7 @@ body{
   display:flex;
   gap:10px;
   margin-bottom:15px;
+  flex-shrink: 0;
 }
 
 .search-pesanan input{
@@ -482,6 +496,7 @@ body{
   </div>
 </div>
 
+<!-- MODAL KONFIRMASI CUSTOM ANTI-FREEZE LAYAR HP -->
 <div class="modal" id="konfirmasiHapusModal">
   <div class="modal-content" style="text-align: center;">
     <div class="modal-title" id="judulKonfirmasi">Yakin mau hapus pesanan ini?</div>
@@ -492,6 +507,7 @@ body{
   </div>
 </div>
 
+<!-- CONTAINER LOADING ANTI LAG -->
 <div id="loading">
   <img src="https://i.gifer.com/ZZ5H.gif" style="width: 50px; height: 50px; filter: hue-rotate(10deg); vertical-align: middle;">
 </div>
