@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Histori Transaksi</title>
 
 <style>
@@ -17,7 +17,8 @@
 body{
   background:#111;
   color:white;
-  padding:55px 20px 20px 20px;
+  /* PERBAIKAN: Gunakan padding atas dinamis agar konten utama (.container) berada tepat di bawah header yang membesar */
+  padding: calc(65px + env(safe-area-inset-top, 24px)) 20px 20px 20px;
 }
 
 .container{
@@ -108,21 +109,20 @@ select{
   color:#888;
   margin-top:30px;
 }
+
+/* HEADER */
 .header{
   position:fixed;
   top:0;
   left:0;
   width:100%;
-
   z-index:1000;
   background:#1b1b1b;
-
-  padding:15px 20px;
-
+  /* PERBAIKAN: Beri ruang di atas teks header sesuai tinggi status bar bawaan HP */
+  padding: calc(15px + env(safe-area-inset-top, 24px)) 20px 15px 20px;
   display:flex;
   justify-content:space-between;
   align-items:center;
-
   border-bottom:1px solid #2a2a2a;
 }
 
@@ -136,17 +136,16 @@ select{
   font-weight:bold;
 }
 
+/* SIDEBAR */
 .sidebar{
   width:260px;
   height:100vh;
   background:#1c1c1c;
-
   position:fixed;
   top:0;
   left:-260px;
-
-  padding-top:55px;
-
+  /* PERBAIKAN: Padding diubah agar konten profil & menu turun ke bawah, tidak tertutup status bar */
+  padding-top: calc(20px + env(safe-area-inset-top, 24px));
   transition:0.3s;
   z-index:9999;
 }
@@ -196,6 +195,7 @@ select{
   margin-top:10px;
   font-weight:bold;
 }
+
 .item.masuk{
   border-left:5px solid #00e676;
 }
@@ -223,491 +223,269 @@ select{
 </style>
 </head>
 <body>
-    <div class="header">
 
-  <div class="menu-btn" onclick="openSidebar()">
-    ☰
-  </div>
-
-  <div class="title">
-  </div>
-
+<div class="header">
+  <div class="menu-btn" onclick="openSidebar()">☰</div>
+  <div class="title">Histori</div>
   <div></div>
-
 </div>
 
 <div class="sidebar" id="sidebar">
-
   <div class="profile-box">
-
-    <img
-      src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-      class="profile-img"
-    >
-
-    <div class="profile-name" id="profileName">
-      User
-    </div>
-
+    <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="profile-img">
+    <div class="profile-name" id="profileName">User</div>
   </div>
-
   <a href="data.html">🏠 Dashboard</a>
-
   <a href="absensi.html">🕒 Absensi</a>
-
   <a href="input.html">📦 Kelola Produk</a>
-
-  <a href="#">💰 Transaksi</a>
-
+  <a href="transaksi.html">💰 Transaksi</a>
   <a href="histori.html">🧾 Histori</a>
-
-  <a href="#" onclick="logout()">🚪 Logout</a>
-
+  <a href="login.html" onclick="logout()">🚪 Logout</a>
 </div>
 
-<div
-  class="overlay"
-  id="overlay"
-  onclick="closeSidebar()"
-></div>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
 <div class="container">
+  <div class="card">
+    <h2>HISTORI TRANSAKSI</h2>
+    <div class="filter">
+      <select id="bulan" onchange="filterData()">
+        <option value="">Bulan</option>
+        <option value="1">Januari</option>
+        <option value="2">Februari</option>
+        <option value="3">Maret</option>
+        <option value="4">April</option>
+        <option value="5">Mei</option>
+        <option value="6">Juni</option>
+        <option value="7">Juli</option>
+        <option value="8">Agustus</option>
+        <option value="9">September</option>
+        <option value="10">Oktober</option>
+        <option value="11">November</option>
+        <option value="12">Desember</option>
+      </select>
 
-<div class="card">
+      <select id="tahun" onchange="filterData()">
+        <option value="">Tahun</option>
+      </select>
+    </div>
 
-<h2>HISTORI TRANSAKSI</h2>
+    <div class="summary">
+      <h3>Total Omset</h3>
+      <div class="omset" id="totalOmset">Rp 0</div>
+    </div>
 
-<div class="filter">
-
-<select id="bulan" onchange="filterData()">
-<option value="">Bulan</option>
-<option value="1">Januari</option>
-<option value="2">Februari</option>
-<option value="3">Maret</option>
-<option value="4">April</option>
-<option value="5">Mei</option>
-<option value="6">Juni</option>
-<option value="7">Juli</option>
-<option value="8">Agustus</option>
-<option value="9">September</option>
-<option value="10">Oktober</option>
-<option value="11">November</option>
-<option value="12">Desember</option>
-</select>
-
-<select id="tahun" onchange="filterData()">
-<option value="">Tahun</option>
-</select>
-
-</div>
-
-<div class="summary">
-
-<h3>Total Omset</h3>
-
-<div class="omset" id="totalOmset">
-Rp 0
-</div>
-
-</div>
-
-<div id="list"></div>
-
-</div>
-
+    <div id="list"></div>
+  </div>
 </div>
 
 <script>
 if (localStorage.getItem("loggedIn") !== "true") {
   window.location.href = "login.html";
 }
-const URL =
-"https://script.google.com/macros/s/AKfycbxpzfOKXJkXqUJbz8b9WeJXJxti5CRSIslQVfVgXviPftSVap8mpqjfuTnZwuz-GOs/exec";
+const URL = "https://script.google.com/macros/s/AKfycbxpzfOKXJkXqUJbz8b9WeJXJxti5CRSIslQVfVgXviPftSVap8mpqjfuTnZwuz-GOs/exec";
 
 let allData = [];
 
 // =====================
 // TAHUN
 // =====================
-
 for(let i=2030;i>=2025;i--){
-
-document.getElementById("tahun")
-.innerHTML += `
-<option value="${i}">
-${i}
-</option>
-`;
-
+  document.getElementById("tahun").innerHTML += `
+    <option value="${i}">${i}</option>
+  `;
 }
 
 // =====================
 // LOAD
 // =====================
-
 async function loadHistory(){
+  try{
+    const [trxRes,pengRes] = await Promise.all([
+      fetch(`${URL}?action=getHistory`),
+      fetch(`${URL}?action=getPengeluaran`)
+    ]);
 
-try{
+    const transaksi = await trxRes.json();
+    const pengeluaran = await pengRes.json();
+    const gabungan = [];
 
-const [trxRes,pengRes] =
-await Promise.all([
-  fetch(`${URL}?action=getHistory`),
-  fetch(`${URL}?action=getPengeluaran`)
-]);
+    // TRANSAKSI
+    transaksi.forEach(item=>{
+      gabungan.push({
+        tipe:"masuk",
+        id:item.id,
+        tanggal:item.tanggal,
+        metode:item.metode,
+        nominal:Number(item.total)
+      });
+    });
 
-const transaksi =
-await trxRes.json();
+    // PENGELUARAN
+    pengeluaran.forEach(item=>{
+      gabungan.push({
+        tipe:"keluar",
+        tanggal:item.tanggal,
+        keterangan:item.keterangan || "Pengeluaran",
+        nominal:Number(item.jumlah)
+      });
+    });
 
-const pengeluaran =
-await pengRes.json();
+    // URUTKAN TERBARU
+    gabungan.sort((a,b)=> new Date(b.tanggal) - new Date(a.tanggal));
+    allData = gabungan;
+    renderData(gabungan);
 
-const gabungan = [];
-
-// TRANSAKSI
-
-transaksi.forEach(item=>{
-
-  gabungan.push({
-    tipe:"masuk",
-    id:item.id,
-    tanggal:item.tanggal,
-    metode:item.metode,
-    nominal:Number(item.total)
-  });
-
-});
-
-// PENGELUARAN
-
-pengeluaran.forEach(item=>{
-
-  gabungan.push({
-    tipe:"keluar",
-    tanggal:item.tanggal,
-    keterangan:item.keterangan || "Pengeluaran",
-    nominal:Number(item.jumlah)
-  });
-
-});
-
-// URUTKAN TERBARU
-
-gabungan.sort((a,b)=>
-new Date(b.tanggal) -
-new Date(a.tanggal)
-);
-
-allData = gabungan;
-
-renderData(gabungan);
-
-}catch(err){
-
-document.getElementById("list")
-.innerHTML =
-"<div class='empty'>Gagal memuat data</div>";
-
-console.log(err);
-
-}
-
+  }catch(err){
+    document.getElementById("list").innerHTML = "<div class='empty'>Gagal memuat data</div>";
+    console.log(err);
+  }
 }
 
 // =====================
 // FILTER
 // =====================
-
 function filterData(){
+  const bulan = document.getElementById("bulan").value;
+  const tahun = document.getElementById("tahun").value;
 
-const bulan =
-document.getElementById("bulan").value;
+  const filtered = allData.filter(item=>{
+    const date = new Date(item.tanggal);
+    const b = date.getMonth()+1;
+    const t = date.getFullYear();
 
-const tahun =
-document.getElementById("tahun").value;
+    const cocokBulan = bulan=="" || b==bulan;
+    const cocokTahun = tahun=="" || t==tahun;
 
-const filtered =
-allData.filter(item=>{
+    return cocokBulan && cocokTahun;
+  });
 
-const date =
-new Date(item.tanggal);
-
-const b =
-date.getMonth()+1;
-
-const t =
-date.getFullYear();
-
-const cocokBulan =
-bulan=="" || b==bulan;
-
-const cocokTahun =
-tahun=="" || t==tahun;
-
-return cocokBulan && cocokTahun;
-
-});
-
-renderData(filtered);
-
+  renderData(filtered);
 }
 
 // =====================
 // RENDER
 // =====================
-
 function renderData(data){
+  let html = "";
+  let totalMasuk = 0;
+  let totalKeluar = 0;
 
-let html = "";
+  if(data.length === 0){
+    html = "<div class='empty'>Belum ada data</div>";
+  }else{
+    data.forEach(item=>{
+      if(item.tipe === "masuk"){
+        totalMasuk += item.nominal;
+        html += `
+          <div class="item masuk" onclick="toggleDetail('${item.id}')" style="cursor:pointer">
+            <div class="top">
+              <div class="id">${item.id}</div>
+              <div class="nominal-masuk">+ Rp ${formatRupiah(item.nominal)}</div>
+            </div>
+            <div class="detail">📅 ${formatTanggal(item.tanggal)}</div>
+            <div class="tipe">💰 Transaksi (${item.metode})</div>
+            <div id="detail-${item.id}" style="display:none; margin-top:10px; padding-top:10px; border-top:1px solid #444;"></div>
+          </div>
+        `;
+      }else{
+        totalKeluar += item.nominal;
+        html += `
+          <div class="item keluar">
+            <div class="top">
+              <div class="id">${item.keterangan}</div>
+              <div class="nominal-keluar">- Rp ${formatRupiah(item.nominal)}</div>
+            </div>
+            <div class="detail">📅 ${formatTanggal(item.tanggal)}</div>
+            <div class="tipe">📉 Pengeluaran</div>
+          </div>
+        `;
+      }
+    });
+  }
 
-let totalMasuk = 0;
-let totalKeluar = 0;
+  const laba = totalMasuk - totalKeluar;
 
-if(data.length === 0){
+  document.getElementById("totalOmset").innerHTML = `
+    <div style="color:#00e676">Masuk : Rp ${formatRupiah(totalMasuk)}</div>
+    <div style="color:#ff5252;margin-top:8px">Keluar : Rp ${formatRupiah(totalKeluar)}</div>
+    <div style="margin-top:10px; font-size:28px; font-weight:bold; color:#facc15">Saldo : Rp ${formatRupiah(laba)}</div>
+  `;
 
-html =
-"<div class='empty'>Belum ada data</div>";
-
-}else{
-
-data.forEach(item=>{
-
-if(item.tipe === "masuk"){
-
-totalMasuk += item.nominal;
-
-html += `
-
-<div class="item masuk"
- onclick="toggleDetail('${item.id}')"
-  style="cursor:pointer"
->
-
-<div class="top">
-
-<div class="id">
-${item.id}
-</div>
-
-<div class="nominal-masuk">
-+ Rp ${formatRupiah(item.nominal)}
-</div>
-
-</div>
-
-<div class="detail">
-📅 ${formatTanggal(item.tanggal)}
-</div>
-
-<div class="tipe">
-💰 Transaksi (${item.metode})
-</div>
-<div
-  id="detail-${item.id}"
-  style="
-    display:none;
-    margin-top:10px;
-    padding-top:10px;
-    border-top:1px solid #444;
-  "
-></div>
-</div>
-
-`;
-
-}else{
-
-totalKeluar += item.nominal;
-
-html += `
-
-<div class="item keluar">
-
-<div class="top">
-
-<div class="id">
-${item.keterangan}
-</div>
-
-<div class="nominal-keluar">
-- Rp ${formatRupiah(item.nominal)}
-</div>
-
-</div>
-
-<div class="detail">
-📅 ${formatTanggal(item.tanggal)}
-</div>
-
-<div class="tipe">
-📉 Pengeluaran
-</div>
-
-</div>
-
-`;
-
-}
-
-});
-
-}
-
-const laba =
-totalMasuk - totalKeluar;
-
-document.getElementById("totalOmset")
-.innerHTML = `
-<div style="color:#00e676">
-Masuk : Rp ${formatRupiah(totalMasuk)}
-</div>
-
-<div style="color:#ff5252;margin-top:8px">
-Keluar : Rp ${formatRupiah(totalKeluar)}
-</div>
-
-<div style="
-margin-top:10px;
-font-size:28px;
-font-weight:bold;
-color:#facc15">
-Saldo : Rp ${formatRupiah(laba)}
-</div>
-`;
-
-document.getElementById("list")
-.innerHTML = html;
-
+  document.getElementById("list").innerHTML = html;
 }
 
 // =====================
 // FORMAT
 // =====================
-
 function formatTanggal(tanggal){
-
-const d =
-new Date(tanggal);
-
-return d.toLocaleString(
-"id-ID",
-{
-day:"2-digit",
-month:"long",
-year:"numeric",
-hour:"2-digit",
-minute:"2-digit"
-}
-);
-
+  const d = new Date(tanggal);
+  return d.toLocaleString("id-ID", {
+    day:"2-digit",
+    month:"long",
+    year:"numeric",
+    hour:"2-digit",
+    minute:"2-digit"
+  });
 }
 
 function formatRupiah(angka){
-
-return Number(angka)
-.toLocaleString("id-ID");
-
+  return Number(angka).toLocaleString("id-ID");
 }
+
 function openSidebar(){
-
-  document
-  .getElementById("sidebar")
-  .classList.add("active");
-
-  document
-  .getElementById("overlay")
-  .classList.add("active");
-
+  document.getElementById("sidebar").classList.add("active");
+  document.getElementById("overlay").classList.add("active");
 }
 
+/* SIDEBAR CONTROLS */
 function closeSidebar(){
-
-  document
-  .getElementById("sidebar")
-  .classList.remove("active");
-
-  document
-  .getElementById("overlay")
-  .classList.remove("active");
-
+  document.getElementById("sidebar").classList.remove("active");
+  document.getElementById("overlay").classList.remove("active");
 }
 
-const username =
-localStorage.getItem("username");
-
+const username = localStorage.getItem("username");
 if(username){
-
-  document
-  .getElementById("profileName")
-  .innerText = username;
-
+  document.getElementById("profileName").innerText = username;
 }
 
 function logout(){
-
   localStorage.clear();
-
-  window.location.href =
-  "login.html";
-
+  window.location.href = "login.html";
 }
+
 async function toggleDetail(id){
-
-  const box =
-  document.getElementById(
-    "detail-" + id
-  );
-
+  const box = document.getElementById("detail-" + id);
   if(box.style.display === "block"){
-
     box.style.display = "none";
     return;
-
   }
-
   if(box.innerHTML.trim() !== ""){
-
     box.style.display = "block";
     return;
-
   }
 
-  const res =
-  await fetch(
-    `${URL}?action=getDetail&id=${id}`
-  );
-
-  const data =
-  await res.json();
-
+  const res = await fetch(`${URL}?action=getDetail&id=${id}`);
+  const data = await res.json();
   let html = "";
 
   if(data.length === 0){
-
-    html =
-    "<div class='detail'>Tidak ada detail produk</div>";
-
+    html = "<div class='detail'>Tidak ada detail produk</div>";
   }else{
-
     data.forEach(item=>{
-
       html += `
-      <div class="detail">
-        🍜 ${item.nama_produk}
-        (${item.qty}x)
-        - Rp ${formatRupiah(item.subtotal)}
-      </div>
+        <div class="detail">
+          🍜 ${item.nama_produk} (${item.qty}x) - Rp ${formatRupiah(item.subtotal)}
+        </div>
       `;
-
     });
-
   }
 
   box.innerHTML = html;
   box.style.display = "block";
-
 }
-loadHistory();
 
+loadHistory();
 </script>
 
 </body>
