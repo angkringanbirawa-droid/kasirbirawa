@@ -219,7 +219,7 @@ body{
   background:#1d1d1d;
   border-radius:20px;
   padding:20px;
-  max-height: 85vh; /* Membatasi tinggi maksimal isi modal di layar HP */
+  max-height: 85vh;
   display: flex;
   flex-direction: column;
 }
@@ -299,10 +299,10 @@ body{
   flex-shrink: 0;
 }
 
-/* ORDER LIST (FIXED SCROLL) */
+/* ORDER LIST */
 #pesananList {
-  max-height: 50vh; /* Membatasi tinggi daftar pesanan gantung */
-  overflow-y: auto; /* Memunculkan scroll-bar jika item meluap banyak */
+  max-height: 50vh;
+  overflow-y: auto;
   padding-right: 4px;
 }
 
@@ -453,7 +453,7 @@ body{
 
 <div class="modal" id="cartModal">
   <div class="modal-content">
-    <div class="modal-title">Keranjang</div>
+    <div class="modal-title" id="cartModalTitle">Keranjang</div>
     <div class="cart-list" id="cartList"></div>
     <div class="total" id="totalHarga">Total : Rp 0</div>
     <button class="pay-btn" onclick="openPayment()">BAYAR SEKARANG</button>
@@ -496,7 +496,6 @@ body{
   </div>
 </div>
 
-<!-- MODAL KONFIRMASI CUSTOM ANTI-FREEZE LAYAR HP -->
 <div class="modal" id="konfirmasiHapusModal">
   <div class="modal-content" style="text-align: center;">
     <div class="modal-title" id="judulKonfirmasi">Yakin mau hapus pesanan ini?</div>
@@ -507,7 +506,6 @@ body{
   </div>
 </div>
 
-<!-- CONTAINER LOADING ANTI LAG -->
 <div id="loading">
   <img src="https://i.gifer.com/ZZ5H.gif" style="width: 50px; height: 50px; filter: hue-rotate(10deg); vertical-align: middle;">
 </div>
@@ -520,15 +518,15 @@ if (localStorage.getItem("loggedIn") !== "true") {
 
 const PRODUCT_URL = "https://script.google.com/macros/s/AKfycbwN6qlNF9VBj7ysb79rVd_AkNSg2jYC22xYwGR6fxLNlur20cu1AYKtS8j0xQb4yNJX/exec";
 const TRANSACTION_URL = "https://script.google.com/macros/s/AKfycbxpzfOKXJkXqUJbz8b9WeJXJxti5CRSIslQVfVgXviPftSVap8mpqjfuTnZwuz-GOs/exec";
-
-// URL GOOGLE APPS SCRIPT DATABASE PENDING LU
 const GANTUNG_URL = "https://script.google.com/macros/s/AKfycbwVm1aod-67Jt3xRuhXNsnmaYVWrEtGDtBcomZaAgMNGjs0ioRA-sB5PItkDheQkfU/exec";
 
 let produkData = [];
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 let savedOrders = [];
 
-// Variabel Penahan Pilihan Baris Untuk Modal Box
+// Variabel Penahan Nama Pelanggan Aktif yang sedang dibuka dari pending
+let namaPelangganAktif = localStorage.getItem("namaPelangganAktif") || ""; 
+
 let barisDipilih = null;
 let namaDipilih = "";
 
@@ -544,6 +542,7 @@ function tutupKonfirmasiHapus() {
 
 function saveLocal(){
   localStorage.setItem("cart", JSON.stringify(cart));
+  localStorage.setItem("namaPelangganAktif", namaPelangganAktif);
 }
 
 /* SIDEBAR */
@@ -633,10 +632,21 @@ function renderCart(){
   });
   if(cart.length === 0){
     html = `<div class="empty">Belum ada produk</div>`;
+    namaPelangganAktif = ""; // Kosongkan nama kalau isi keranjang habis manual
+    saveLocal();
   }
+  
   cartList.innerHTML = html;
   document.getElementById("cartBadge").innerText = totalItem;
   document.getElementById("totalHarga").innerText = "Total : Rp " + total.toLocaleString("id-ID");
+  
+  // Mengatur Judul Keranjang (Dinamis menampilkan nama pelanggan jika ada)
+  const titleHeader = document.getElementById("cartModalTitle");
+  if(namaPelangganAktif) {
+    titleHeader.innerText = `Keranjang: ${namaPelangganAktif}`;
+  } else {
+    titleHeader.innerText = "Keranjang";
+  }
 }
 
 function tambahQty(index){
@@ -656,6 +666,7 @@ function kurangQty(index){
 
 function openCart(){
   document.getElementById("cartModal").style.display = "flex";
+  renderCart();
 }
 
 function openPayment(){
@@ -679,6 +690,7 @@ async function bayar(method){
     document.getElementById("paymentModal").style.display = "none";
     document.getElementById("strukModal").style.display = "flex";
     cart = [];
+    namaPelangganAktif = ""; // Clear data pelanggan jika sukses dibayar penuh
     saveLocal();
     renderCart();
     loadProduk();
@@ -697,6 +709,7 @@ function cetakStruk(){
 function selesaiTransaksi(){
   document.getElementById("strukModal").style.display = "none";
   cart = [];
+  namaPelangganAktif = "";
   renderCart();
   saveLocal();
 }
@@ -721,6 +734,9 @@ function openSaveOrder(){
     alert("Keranjang kosong");
     return;
   }
+  
+  // Masukkan nama lama otomatis ke kotak input agar kasir tidak usah ketik ulang
+  document.getElementById("namaPesanan").value = namaPelangganAktif;
   document.getElementById("saveModal").style.display = "flex";
 }
 
@@ -759,6 +775,7 @@ async function simpanPesanan(){
       localStorage.setItem("backupItems", JSON.stringify(backupData));
 
       cart = [];
+      namaPelangganAktif = ""; // Reset setelah disimpan ulang
       saveLocal();
       renderCart();
       
@@ -831,11 +848,8 @@ function bukaKonfirmasiHapus(rowNumber) {
 function bukaKonfirmasiAmbil(rowNumber, escapedNama) {
   barisDipilih = rowNumber;
   namaDipilih = escapedNama;
-  
-  // Mengubah teks escape kembali jadi teks biasa
   const namaReal = unescape(escapedNama); 
   
-  // Mengubah kalimat notice secara dinamis sesuai nama pelanggan
   document.getElementById("judulKonfirmasi").innerText = `Proses Bayar untuk ${namaReal}?`;
   
   document.getElementById("btnYaHapus").onclick = function() {
@@ -881,6 +895,9 @@ async function eksekusiLoadPesanan(){
     hideLoading();
 
     if(text.trim() === "BERHASIL_HAPUS") {
+      // SET NAMA PELANGGAN AKTIF AGAR DIKERANJANG MUNCUL NAMANYA
+      namaPelangganAktif = namaReal; 
+
       let backupData = JSON.parse(localStorage.getItem("backupItems")) || {};
       if(backupData[namaReal]) {
         cart = [...backupData[namaReal]];
