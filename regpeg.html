@@ -6,433 +6,224 @@
   <title>Registrasi Pegawai - BirawaPOS</title>
 
   <style>
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-      font-family:Arial,sans-serif;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
     }
 
-    body{
-      background:#111;
-      color:white;
-      /* PERBAIKAN: Padding atas dinamis mengikuti status bar aman notch HP */
-      padding: calc(75px + env(safe-area-inset-top, 24px)) 16px 20px 16px;
+    body {
+      background: #111;
+      color: white;
+      /* Padding atas menyesuaikan status bar/notch */
+      padding: calc(70px + env(safe-area-inset-top, 24px)) 20px 20px 20px;
     }
 
-    /* HEADER */
-    .header{
+    /* MENU BUTTON */
+    .menu-btn {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      z-index: 1000;
-      background:#1b1b1b;
-      padding: calc(15px + env(safe-area-inset-top, 24px)) 20px 15px 20px;
-      display:flex;
-      align-items:center;
-      border-bottom:1px solid #2a2a2a;
-    }
-
-    .menu-btn{
-      font-size:28px;
-      cursor:pointer;
-    }
-
-    .title{
-      color:#facc15;
-      font-size:20px;
-      font-weight:bold;
-      margin-left:15px;
-      letter-spacing: 0.5px;
+      top: calc(15px + env(safe-area-inset-top, 24px));
+      left: 15px;
+      width: 45px;
+      height: 45px;
+      background: #facc15;
+      color: #111;
+      border-radius: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      font-weight: bold;
+      z-index: 9999;
+      cursor: pointer;
     }
 
     /* SIDEBAR */
-    .sidebar{
-      width:270px;
-      height:100vh;
-      background:#1c1c1c;
-      position:fixed;
-      top:0;
-      left:-270px;
-      transition:0.3s;
-      z-index:9999;
-      overflow-y:auto;
-      padding-top: calc(20px + env(safe-area-inset-top, 24px));
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -250px;
+      width: 220px;
+      height: 100vh;
+      background: #1d1d1d;
+      padding-top: calc(70px + env(safe-area-inset-top, 24px));
+      transition: 0.3s;
+      z-index: 9998;
+      border-right: 1px solid #333;
     }
 
-    .sidebar.active{
-      left:0;
+    .sidebar.active {
+      left: 0;
     }
 
-    /* PROFILE */
-    .profile-box{
-      padding:25px 20px;
-      text-align:center;
-      border-bottom:1px solid #2c2c2c;
+    .sidebar a {
+      display: block;
+      padding: 15px 20px;
+      color: white;
+      text-decoration: none;
+      border-bottom: 1px solid #2a2a2a;
     }
 
-    .profile-img{
-      width:80px;
-      height:80px;
-      border-radius:50%;
-      border:3px solid #facc15;
-      background:white;
-      margin-bottom:12px;
+    .sidebar a:hover {
+      background: #2b2b2b;
     }
 
-    .profile-name{
-      font-size:17px;
-      font-weight:bold;
-      color:white;
-    }
-
-    .profile-role{
-      font-size:12px;
-      color:#facc15;
-      background: rgba(250, 204, 21, 0.1);
-      display: inline-block;
-      padding: 3px 10px;
-      border-radius: 20px;
-      margin-top:6px;
-    }
-
-    /* SIDEBAR MENU */
-    .sidebar a{
-      display:flex;
-      align-items:center;
-      gap:14px;
-      padding:16px 20px;
-      color:white;
-      text-decoration:none;
-      border-bottom:1px solid #2a2a2a;
-      transition:0.2s;
-      font-size: 15px;
-    }
-
-    .sidebar a:hover{
-      background:#2d2d2d;
-    }
-
-    /* OVERLAY */
-    .overlay{
-      position:fixed;
-      width:100%;
-      height:100vh;
-      background:rgba(0,0,0,0.6);
-      top:0;
-      left:0;
-      display:none;
-      z-index:998;
-    }
-
-    .overlay.active{
-      display:block;
-    }
-
-    /* CONTENT CONTAINER */
-    .container{
-      max-width: 550px;
-      margin: auto;
-    }
-
-    .card{
-      background:#1e1e1e;
-      border-radius:18px;
-      padding:22px;
-      border:1px solid #2a2a2a;
+    h2 {
+      text-align: center;
+      color: #facc15;
       margin-bottom: 20px;
     }
 
-    h2{
-      color:#facc15;
-      font-size:18px;
-      font-weight:bold;
-      margin-bottom:20px;
-      text-align:center;
-      letter-spacing: 0.5px;
+    /* FORM */
+    .form {
+      background: #1d1d1d;
+      padding: 20px;
+      border-radius: 14px;
+      margin-bottom: 20px;
+      border: 1px solid #333;
     }
 
-    .form-group{
-      margin-bottom:16px;
-    }
-
-    label{
-      display:block;
-      font-size:13px;
-      color:#aaa;
-      margin-bottom:6px;
-      font-weight: bold;
-    }
-
-    .input{
-      width:100%;
-      padding:14px;
-      border:1px solid transparent;
-      border-radius:12px;
-      background:#2a2a2a;
-      color:white;
-      outline:none;
-      font-size:14px;
-      transition: 0.2s;
-    }
-
-    .input:focus{
-      border-color: #facc15;
-    }
-
-    select.input{
-      cursor: pointer;
-    }
-
-    .btn{
-      width:100%;
-      padding:15px;
-      border:none;
-      border-radius:14px;
-      background:#facc15;
-      color:#111;
-      font-weight:bold;
-      font-size:15px;
-      cursor:pointer;
-      transition: 0.2s;
-      margin-top: 10px;
-    }
-
-    .btn:active{
-      transform: scale(0.98);
-    }
-
-    /* STYLING LIST PEGAWAI GAYA BARU */
-    .section-title {
-      font-size: 15px;
-      font-weight: bold;
-      color: #aaa;
+    input {
+      width: 100%;
+      padding: 13px;
       margin-bottom: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .pegawai-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: #1c1c1c;
-      padding: 14px 18px;
-      border-radius: 12px;
-      border: 1px solid #2a2a2a;
-      margin-bottom: 10px;
-    }
-
-    .pegawai-info .name {
-      font-weight: bold;
-      font-size: 15px;
-      color: #fff;
-    }
-
-    .pegawai-info .role-badge {
-      display: inline-block;
-      font-size: 11px;
-      padding: 2px 8px;
+      border: none;
       border-radius: 10px;
-      margin-top: 4px;
-      font-weight: bold;
+      background: #2b2b2b;
+      color: white;
+      outline: none;
     }
 
-    .role-badge.owner {
-      background: rgba(250, 204, 21, 0.15);
-      color: #facc15;
-    }
-
-    .role-badge.karyawan {
-      background: rgba(0, 230, 118, 0.15);
-      color: #00e676;
-    }
-
-    .btn-delete {
-      background: rgba(239, 68, 68, 0.15);
-      color: #ff5252;
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-size: 12px;
+    button {
+      width: 100%;
+      padding: 13px;
+      background: #facc15;
+      border: none;
+      border-radius: 10px;
       font-weight: bold;
       cursor: pointer;
-      transition: 0.2s;
     }
 
-    .btn-delete:hover {
-      background: #ef4444;
-      color: white;
+    /* LIST */
+    .list {
+      margin-top: 20px;
+    }
+
+    .card {
+      background: #1d1d1d;
+      padding: 15px;
+      margin-bottom: 12px;
+      border-radius: 12px;
+      border: 1px solid #333;
+    }
+
+    .name {
+      font-size: 18px;
+      font-weight: bold;
+      color: #facc15;
+      margin-bottom: 6px;
+    }
+
+    .status {
+      font-size: 13px;
+      color: #bbb;
+      line-height: 1.6;
     }
 
     .empty {
       text-align: center;
-      color: #666;
-      font-size: 14px;
-      padding: 20px 0;
+      color: #777;
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <div class="menu-btn" onclick="openSidebar()">☰</div>
-    <div class="title">BIRAWA POS</div>
-  </div>
+  <div class="menu-btn" onclick="toggleSidebar()">☰</div>
 
   <div class="sidebar" id="sidebar">
-    <div class="profile-box">
-      <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="profile-img">
-      <div class="profile-name" id="profileName">Owner</div>
-      <div class="profile-role" id="profileRole">OWNER</div>
-    </div>
     <a href="data.html">🏠 Dashboard</a>
+    <a href="produk.html">📦 Kelola Produk</a>
     <a href="absensi.html">🕒 Absensi</a>
-    <a href="input.html">🍜 Kelola Produk</a>
-    <a href="transaksi.html">💰 Transaksi</a>
-    <a href="histori.html">🧾 Histori Transaksi</a>
-    <a href="regpeg.html">👨‍🍳 Pendaftaran Pegawai</a>
-    <a href="javascript:void(0)" onclick="logout()">🚪 Logout</a>
+    <a href="regpeg.html">👤 Registrasi Pegawai</a>
   </div>
 
-  <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+  <h2>REGISTRASI PEGAWAI</h2>
 
-  <div class="container">
-    <!-- CARD FORM PENDAFTARAN -->
-    <div class="card">
-      <h2>DAFTAR PEGAWAI BARU</h2>
-      
-      <div class="form-group">
-        <label>Nama Lengkap</label>
-        <input type="text" id="regUsername" class="input" placeholder="Masukkan nama pegawai">
-      </div>
+  <div class="form">
+    <input type="text" id="nama" placeholder="Nama Lengkap">
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="addPegawai()">TAMBAH PEGAWAI</button>
+  </div>
 
-      <div class="form-group">
-        <label>Password Akun</label>
-        <input type="password" id="regPassword" class="input" placeholder="Buat password login">
-      </div>
-
-      <div class="form-group">
-        <label>Hak Akses / Role</label>
-        <select id="regRole" class="input">
-          <option value="karyawan">👨‍🍳 Karyawan / Kasir</option>
-          <option value="owner">👑 Owner / Admin</option>
-        </select>
-      </div>
-
-      <button class="btn" onclick="prosesRegistrasi()">DAFTARKAN PEGAWAI</button>
-    </div>
-
-    <!-- AREA LIST DATA PEGAWAI AKTIF -->
-    <div class="section-title">Daftar Pegawai Aktif</div>
-    <div id="listPegawai">
-      <div class="empty">Memuat data pegawai...</div>
-    </div>
+  <div class="list" id="list">
+    <div class="empty">Loading data pegawai...</div>
   </div>
 
   <script>
-    if (localStorage.getItem("loggedIn") !== "true" || localStorage.getItem("role") !== "owner") {
-      alert("Akses ditolak! Halaman ini khusus Owner.");
-      window.location.href = "data.html";
+    if (localStorage.getItem("loggedIn") !== "true") {
+      window.location.href = "login.html";
     }
 
     const URL = "https://script.google.com/macros/s/AKfycbzdiABCZIRA7mWd6zx1vSFmnFEK6vm4polW3-hzHlilfeagTnN8V7yf9UO-BdCOKDUb/exec";
 
-    function openSidebar(){
-      document.getElementById("sidebar").classList.add("active");
-      document.getElementById("overlay").classList.add("active");
+    function toggleSidebar() {
+      document.getElementById("sidebar").classList.toggle("active");
     }
 
-    function closeSidebar(){
-      document.getElementById("sidebar").classList.remove("active");
-      document.getElementById("overlay").classList.remove("active");
-    }
+    async function addPegawai() {
+      const nama = document.getElementById("nama").value;
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
 
-    const username = localStorage.getItem("username");
-    if(username){
-      document.getElementById("profileName").innerText = username;
-    }
-
-    function logout(){
-      localStorage.clear();
-      window.location.replace("login.html");
-    }
-
-    // FUNGSI REGISTRASI PEGAWAI BARU
-    async function prosesRegistrasi() {
-      const user = document.getElementById("regUsername").value.trim();
-      const pass = document.getElementById("regPassword").value.trim();
-      const role = document.getElementById("regRole").value;
-
-      if(!user || !pass) {
-        alert("Nama dan Password tidak boleh kosong!");
+      if(!nama || !username || !password) {
+        alert("Isi semua data");
         return;
       }
 
       try {
-        const response = await fetch(`${URL}?action=registerPegawai&username=${encodeURIComponent(user)}&password=${encodeURIComponent(pass)}&role=${role}`);
-        const result = await response.text();
-        alert(result);
-        
-        // Reset form
-        document.getElementById("regUsername").value = "";
-        document.getElementById("regPassword").value = "";
-        
-        // Refresh list
+        const res = await fetch(`${URL}?action=addEmployee&nama=${encodeURIComponent(nama)}&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`);
+        const text = await res.text();
+        alert(text);
         loadPegawai();
-      } catch (err) {
-        console.error(err);
-        alert("Gagal mendaftarkan pegawai.");
+        document.getElementById("nama").value = "";
+        document.getElementById("username").value = "";
+        document.getElementById("password").value = "";
+      } catch(err) {
+        alert("Server error");
+        console.log(err);
       }
     }
 
-    // FUNGSI AMBIL & TAMPILKAN LIST PEGAWAI
     async function loadPegawai() {
       try {
-        const response = await fetch(`${URL}?action=getPegawai`);
-        const data = await response.json();
+        const res = await fetch(`${URL}?action=getUsers`);
+        const data = await res.json();
         let html = "";
 
         if(data.length === 0) {
-          html = `<div class="empty">Belum ada data pegawai terdaftar</div>`;
+          html = `<div class="empty">Belum ada pegawai</div>`;
         } else {
-          data.forEach(pegawai => {
-            // Hilangkan data sensitif password dari display UI demi keamanan
+          data.reverse().forEach(u => {
             html += `
-              <div class="pegawai-item">
-                <div class="pegawai-info">
-                  <div class="name">${pegawai.username}</div>
-                  <div class="role-badge ${pegawai.role}">${pegawai.role.toUpperCase()}</div>
-                </div>
-                <button class="btn-delete" onclick="hapusPegawai('${pegawai.username}')">Hapus</button>
+              <div class="card">
+                <div class="name">${u.nama}</div>
+                <div class="status">👤 Username : ${u.username}</div>
+                <div class="status">🛡️ Role : ${u.role}</div>
+                <div class="status">✅ Status : ${u.status}</div>
               </div>
             `;
           });
         }
-        document.getElementById("listPegawai").innerHTML = html;
-      } catch (err) {
-        console.error(err);
-        document.getElementById("listPegawai").innerHTML = `<div class="empty">Gagal memuat list pegawai</div>`;
+        document.getElementById("list").innerHTML = html;
+      } catch(err) {
+        console.log(err);
+        document.getElementById("list").innerHTML = `<div class="empty">Gagal load data</div>`;
       }
     }
 
-    // FUNGSI HAPUS PEGAWAI
-    async function hapusPegawai(username) {
-      if(!confirm(`Apakah Anda yakin ingin menghapus akun ${username}?`)) return;
-
-      try {
-        const response = await fetch(`${URL}?action=deletePegawai&username=${encodeURIComponent(username)}`);
-        const result = await response.text();
-        alert(result);
-        loadPegawai();
-      } catch (err) {
-        console.error(err);
-        alert("Gagal menghapus pegawai.");
-      }
-    }
-
-    // Jalankan list saat pertama kali halaman dibuka
     loadPegawai();
   </script>
 </body>
