@@ -456,6 +456,7 @@ body{
     <div class="modal-title" id="cartModalTitle">Keranjang</div>
     <div class="cart-list" id="cartList"></div>
     <div class="total" id="totalHarga">Total : Rp 0</div>
+    <input type="text" id="inputNamaPelanggan" class="input-name" placeholder="Nama Pelanggan" style="background:#333; color:white; margin-bottom:10px;">
     <button class="pay-btn" onclick="openPayment()">BAYAR SEKARANG</button>
     <button class="save-btn" onclick="openSaveOrder()">SIMPAN PESANAN</button>
   </div>
@@ -682,15 +683,26 @@ async function bayar(method){
   try{
     let total = 0;
     cart.forEach(item => { total += item.harga * item.qty; });
+    
+    // Ambil nama dari input baru
+    let nama = document.getElementById("inputNamaPelanggan").value || "Umum";
+    // Generate kode acak 9 digit
+    let kodeAcak = Math.floor(Math.random() * 900000000) + 100000000;
+    let idTransaksi = `${nama} - ${kodeAcak}`;
+
     showLoading();
-    const response = await fetch(`${TRANSACTION_URL}?action=saveTransaction&method=${method}&total=${total}&items=${encodeURIComponent(JSON.stringify(cart))}`);
+    
+    // Kirim ID transaksi baru ke server
+    const response = await fetch(`${TRANSACTION_URL}?action=saveTransaction&method=${method}&total=${total}&items=${encodeURIComponent(JSON.stringify(cart))}&idTransaksi=${encodeURIComponent(idTransaksi)}`);
     const result = await response.text();
+    
     hideLoading();
-    console.log(result);
     document.getElementById("paymentModal").style.display = "none";
     document.getElementById("strukModal").style.display = "flex";
+    
     cart = [];
-    namaPelangganAktif = ""; // Clear data pelanggan jika sukses dibayar penuh
+    namaPelangganAktif = ""; 
+    document.getElementById("inputNamaPelanggan").value = ""; // Reset input
     saveLocal();
     renderCart();
     loadProduk();
